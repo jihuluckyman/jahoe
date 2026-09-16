@@ -120,7 +120,7 @@
         </div>
     </div>
 
-    <!-- 배경음악 오디오 (지정된 GitHub 경로 및 무한 반복 loop 설정) -->
+    <!-- 배경음악 오디오 -->
     <audio id="bgmAudio" loop src="https://raw.githubusercontent.com/jihuluckyman/jahoe/main/assets/sound/bgm.mp3"></audio>
 
     <div class="bg-overlay"></div>
@@ -137,7 +137,6 @@
         <p class="sub-title">미니게임 커뮤니티 플랫폼</p>
 
         <div class="quick-nav">
-            <!-- 메뉴 버튼 -->
             <button class="nav-btn" onclick="openMenuModal()">⚙️ 메뉴</button>
             <button class="nav-btn" onclick="fetchAndShowNotice()">📢 공지사항 보기</button>
         </div>
@@ -167,7 +166,7 @@
         </div>
     </div>
 
-    <!-- 커스텀 공지 모달 레이어 (새로고침 시 블러와 함께 뜨는 공지창) -->
+    <!-- 커스텀 공지 모달 레이어 -->
     <div class="modal-overlay" id="customModal">
         <div class="modal-box" id="modalBox">
             <div class="modal-badge" id="modalBadge" style="display: none;"></div>
@@ -179,9 +178,8 @@
     </div>
 
     <script>
-        const REPO_OWNER = 'jihuluckyman';
-        const REPO_NAME = 'jahoe';
-        const FILE_PATH = 'assets/announcement.txt';
+        // 본인 리포지토리의 assets/announcement.txt 경로 설정 완료
+        const NOTICE_URL = 'https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/announcement.txt';
 
         const introOverlay = document.getElementById('introOverlay');
         const startBtn = document.getElementById('startBtn');
@@ -202,7 +200,6 @@
         const bgmToggleBtn = document.getElementById('bgmToggleBtn');
         let isBgmPlaying = false;
 
-        // '시작하기(START)' 버튼 클릭 시 실행되는 가짜 로딩, 노래 재생 및 인트로 해제 + 새로고침 공지 로드 함수
         function handleGameStart() {
             startBtn.style.display = 'none';
             loadingContainer.style.display = 'flex';
@@ -217,7 +214,6 @@
                     loadingText.innerText = `SYSTEM READY!`;
                     loadingBarFill.style.width = `100%`;
 
-                    // 음악 재생 및 인트로 화면 페이드아웃 후 새로고침 공지 띄우기
                     setTimeout(() => {
                         bgmAudio.play().then(() => {
                             isBgmPlaying = true;
@@ -227,8 +223,6 @@
                         });
 
                         introOverlay.classList.add('fade-out');
-
-                        // 인트로가 사라진 후 새로고침 시점의 최신 공지 로드 및 블러 팝업 출력
                         loadAndShowNoticeOnRefresh();
                     }, 400);
                 } else {
@@ -238,7 +232,6 @@
             }, intervalTime);
         }
 
-        // 배경음악 토글 함수
         function toggleBgm() {
             if (bgmAudio.paused) {
                 bgmAudio.play().then(() => {
@@ -254,25 +247,14 @@
             }
         }
 
-        // 메뉴 모달 제어
         function openMenuModal() { menuModal.classList.add('active'); }
         function closeMenuModal() { menuModal.classList.remove('active'); }
 
-        // GitHub API 기반 공지 파일 불러오기 유틸 (강력한 캐시 우회 적용)
+        // 캐시 우회(Bypass Cache)를 위해 매 요청마다 타임스탬프(?t=시간값)를 붙여서 가져옵니다.
         async function fetchNoticeData() {
             try {
-                // 캐시 방지를 위해 URL 뒤에 현재 시간 밀리초(?t=...)를 강제로 붙입니다.
                 const timestamp = new Date().getTime();
-                const fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}?t=${timestamp}`;
-
-                const response = await fetch(fileUrl, { 
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache'
-                    }
-                });
-                
+                const response = await fetch(`${NOTICE_URL}?t=${timestamp}`, { cache: 'no-store' });
                 if (!response.ok) return null;
 
                 const textData = await response.text();
@@ -283,20 +265,18 @@
             }
         }
 
-        // 새로고침 시점에 공지를 불러와 블러 배경과 함께 띄우는 함수
         async function loadAndShowNoticeOnRefresh() {
             const jsonData = await fetchNoticeData();
             if (!jsonData) return;
 
             if (jsonData.expireDate) {
                 const today = new Date().toISOString().split('T')[0];
-                if (today > jsonData.expireDate) return; // 만료된 공지면 띄우지 않음
+                if (today > jsonData.expireDate) return; 
             }
 
             displayNoticeModal(jsonData);
         }
 
-        // 수동 공지 호출 (로고 아이콘 또는 메뉴/버튼 클릭 시)
         async function fetchAndShowNotice() {
             const jsonData = await fetchNoticeData();
             if (jsonData) {
@@ -309,11 +289,10 @@
                 }
                 displayNoticeModal(jsonData);
             } else {
-                alert('공지사항을 불러올 수 없습니다.');
+                alert('공지사항을 불러올 수 없습니다. 경로를 확인해주세요.');
             }
         }
 
-        // 공지 모달 창 렌더링 및 출력
         function displayNoticeModal(data) {
             modalIcon.innerText = data.icon || '📢';
             modalTitle.innerText = data.title || '공지사항';
