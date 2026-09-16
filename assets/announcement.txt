@@ -1,14 +1,14 @@
 {
-  "badge": "중요 공지",
-  "icon": "📢",
-  "title": " ㅋㅋez",
-  "content": "안녕하세요. 개발팀입니다.\n새로운 미니게임 2종이 추가되었습니다!\n\n- 신규 게임: '숫자 맞추기', '카드 뒤집기'\n- 데이터 자동 백업 시스템 도입\n- UI 디자인 대규모 개편\n\n항상 이용해 주셔서 감사합니다!",
-  "themeColor": "#38bdf8",
+  "badge": "게임출시!",
+  "icon": "👾",
+  "title": "lol",
+  "content": "야\n이겜\n노잼",
+  "themeColor": "#f83a3a",
   "modalBgColor": "#1e293b",
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
-  "btnLink": "",
+  "btnLink": "youtube.com",
   "expireDate": "",
-  "updatedAt": "2026-09-16T11:58:53.090Z"
+  "updatedAt": "2026-09-16T12:01:41.125Z"
 }
