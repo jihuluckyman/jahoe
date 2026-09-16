@@ -10,5 +10,5 @@
   "btnText": "확인했습니다",
   "btnLink": "youtube.com",
   "expireDate": "",
-  "updatedAt": "2026-09-16T12:01:41.125Z"
+  "updatedAt": "2026-09-16T12:06:00.186Z"
 }
