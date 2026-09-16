@@ -2,13 +2,13 @@
   "badge": "중요 공지",
   "icon": "📢",
   "title": "[업데이트] 자회:이기다 v2.0 오픈 안내",
-  "content": "유튜브 채널 개설~~~",
-  "themeColor": "#38bdf8",
-  "modalBgColor": "#1e293b",
+  "content": "ㄴㄴㄴㄴㄴㄴㄴㄴ",
+  "themeColor": "#bdbdbd",
+  "modalBgColor": "#1a71ff",
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
   "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-16T12:47:24.934Z"
+  "updatedAt": "2026-09-16T12:52:55.502Z"
 }
