@@ -1,6 +1,6 @@
 {
   "badge": "게임출시!",
-  "icon": "🎉",
+  "icon": "🫅",
   "title": "노잼",
   "content": "왜 할까요? 이겜!???",
   "themeColor": "#000000",
