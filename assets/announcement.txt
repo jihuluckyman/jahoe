@@ -1,14 +1,14 @@
 {
   "badge": "게임출시!",
-  "icon": "📢",
-  "title": "꿀잼 ㅋㅋ",
+  "icon": "🎉",
+  "title": "노잼",
   "content": "왜 할까요? 이겜!???",
-  "themeColor": "#f83a3a",
+  "themeColor": "#000000",
   "modalBgColor": "#1e293b",
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
   "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-16T12:11:36.036Z"
+  "updatedAt": "2026-09-16T12:18:03.428Z"
 }
