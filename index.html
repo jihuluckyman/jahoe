@@ -44,7 +44,7 @@
 
         footer { text-align: center; padding: 2.5rem 1rem; color: #64748b; font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(15, 23, 42, 0.6); }
 
-        /* 최초 진입 인트로 화면 (간지나는 시작하기 오버레이) 스타일 */
+        /* 처음 접속 시 뜨는 간지나는 시작하기 화면 (인트로) */
         #introOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
@@ -72,7 +72,7 @@
         .loading-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #c084fc); transition: width 0.1s linear; }
         .loading-text { font-size: 0.85rem; color: #94a3b8; font-family: 'Orbitron', sans-serif; }
 
-        /* 모달 공통 스타일 */
+        /* 모달 공통 스타일 (배경 블러 처리 포함) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
@@ -167,7 +167,7 @@
         </div>
     </div>
 
-    <!-- 커스텀 공지 모달 레이어 -->
+    <!-- 커스텀 공지 모달 레이어 (새로고침 시 블러와 함께 뜨는 공지창) -->
     <div class="modal-overlay" id="customModal">
         <div class="modal-box" id="modalBox">
             <div class="modal-badge" id="modalBadge" style="display: none;"></div>
@@ -182,9 +182,6 @@
         const REPO_OWNER = 'jihuluckyman';
         const REPO_NAME = 'jahoe';
         const FILE_PATH = 'assets/announcement.txt';
-
-        let previousText = ''; 
-        let isFirstCheck = true; // 최초 접속 시 자동 공지 팝업 방지용
 
         const introOverlay = document.getElementById('introOverlay');
         const startBtn = document.getElementById('startBtn');
@@ -205,22 +202,22 @@
         const bgmToggleBtn = document.getElementById('bgmToggleBtn');
         let isBgmPlaying = false;
 
-        // '시작하기(START)' 버튼 클릭 시 실행되는 가짜 로딩 및 진입 함수
+        // '시작하기(START)' 버튼 클릭 시 실행되는 가짜 로딩, 노래 재생 및 인트로 해제 + 새로고침 공지 로드 함수
         function handleGameStart() {
             startBtn.style.display = 'none';
             loadingContainer.style.display = 'flex';
 
             let progress = 0;
-            const intervalTime = 15; // 로딩 속도 조절
+            const intervalTime = 15; 
             const loadingInterval = setInterval(() => {
-                progress += Math.floor(Math.random() * 8) + 3; // 무작위로 빠르게 차오름
+                progress += Math.floor(Math.random() * 8) + 3; 
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(loadingInterval);
                     loadingText.innerText = `SYSTEM READY!`;
                     loadingBarFill.style.width = `100%`;
 
-                    // 음악 재생 및 인트로 화면 페이드아웃
+                    // 음악 재생 및 인트로 화면 페이드아웃 후 새로고침 공지 띄우기
                     setTimeout(() => {
                         bgmAudio.play().then(() => {
                             isBgmPlaying = true;
@@ -230,6 +227,9 @@
                         });
 
                         introOverlay.classList.add('fade-out');
+
+                        // 인트로가 사라진 후 새로고침 시점의 최신 공지 로드 및 블러 팝업 출력
+                        loadAndShowNoticeOnRefresh();
                     }, 400);
                 } else {
                     loadingBarFill.style.width = `${progress}%`;
@@ -258,62 +258,48 @@
         function openMenuModal() { menuModal.classList.add('active'); }
         function closeMenuModal() { menuModal.classList.remove('active'); }
 
-        // GitHub API 기반 실시간 공지 로드 (캐시 우회)
-        async function fetchRealtimeNoticeData() {
+        // GitHub API 기반 공지 파일 불러오기 유틸 (강력한 캐시 우회 적용)
+        async function fetchNoticeData() {
             try {
-                const commitRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits/main`, {
-                    headers: { 'Accept': 'application/vnd.github.v3+json' },
-                    cache: 'no-store'
+                // 캐시 방지를 위해 URL 뒤에 현재 시간 밀리초(?t=...)를 강제로 붙입니다.
+                const timestamp = new Date().getTime();
+                const fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}?t=${timestamp}`;
+
+                const response = await fetch(fileUrl, { 
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
                 });
-
-                let fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}`;
-
-                if (commitRes.ok) {
-                    const commitData = await commitRes.json();
-                    const latestHash = commitData.sha;
-                    fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${latestHash}/${FILE_PATH}`;
-                }
-
-                const response = await fetch(fileUrl, { cache: 'no-store' });
+                
                 if (!response.ok) return null;
 
                 const textData = await response.text();
-                return { textData, jsonData: JSON.parse(textData) };
+                return JSON.parse(textData);
             } catch (err) {
-                console.error('실시간 공지 불러오기 실패:', err);
+                console.error('공지 불러오기 실패:', err);
                 return null;
             }
         }
 
-        // 백그라운드 자동 검사 (첫 진입 시에는 팝업을 띄우지 않음)
-        async function checkNoticeAuto() {
-            const res = await fetchRealtimeNoticeData();
-            if (!res) return;
-
-            const { textData, jsonData } = res;
+        // 새로고침 시점에 공지를 불러와 블러 배경과 함께 띄우는 함수
+        async function loadAndShowNoticeOnRefresh() {
+            const jsonData = await fetchNoticeData();
+            if (!jsonData) return;
 
             if (jsonData.expireDate) {
                 const today = new Date().toISOString().split('T')[0];
-                if (today > jsonData.expireDate) return;
+                if (today > jsonData.expireDate) return; // 만료된 공지면 띄우지 않음
             }
 
-            if (isFirstCheck) {
-                previousText = textData;
-                isFirstCheck = false;
-                return;
-            }
-
-            if (previousText !== textData) {
-                previousText = textData;
-                displayNoticeModal(jsonData);
-            }
+            displayNoticeModal(jsonData);
         }
 
-        // 수동 공지 호출 (로고/버튼)
+        // 수동 공지 호출 (로고 아이콘 또는 메뉴/버튼 클릭 시)
         async function fetchAndShowNotice() {
-            const res = await fetchRealtimeNoticeData();
-            if (res) {
-                const { textData, jsonData } = res;
+            const jsonData = await fetchNoticeData();
+            if (jsonData) {
                 if (jsonData.expireDate) {
                     const today = new Date().toISOString().split('T')[0];
                     if (today > jsonData.expireDate) {
@@ -321,14 +307,13 @@
                         return;
                     }
                 }
-                previousText = textData;
                 displayNoticeModal(jsonData);
             } else {
                 alert('공지사항을 불러올 수 없습니다.');
             }
         }
 
-        // 공지 모달 창 렌더링
+        // 공지 모달 창 렌더링 및 출력
         function displayNoticeModal(data) {
             modalIcon.innerText = data.icon || '📢';
             modalTitle.innerText = data.title || '공지사항';
@@ -383,10 +368,6 @@
 
         customModal.addEventListener('click', (e) => { if (e.target === customModal) closeNoticeModal(); });
         menuModal.addEventListener('click', (e) => { if (e.target === menuModal) closeMenuModal(); });
-
-        // 실시간 업데이트 감지 주기 가동 (3초마다 체크)
-        checkNoticeAuto();
-        setInterval(checkNoticeAuto, 3000);
     </script>
 </body>
 </html>
