@@ -1,286 +1,392 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#071020">
-  <title>자회의 업적 · Jahoe's Achievements</title>
-  <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자회:이기다 | JAHOE:WIN</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
 
-    :root { --ink:#edf5ff; --muted:#8fa2bf; --line:rgba(181,207,255,.16); --panel:rgba(9,18,39,.72); --cyan:#72e7ff; --violet:#b999ff; --gold:#ffd66b; --basic:#b9d6e4; --rare:#64d8ff; --super:#ca80ff; --myth:#ff7bb7; --legendary:#ffca62; --legend:#fff1ad; --hidden:#8effbd; --unknown:#fbfbff; }
-    * { box-sizing:border-box; word-break: keep-all; overflow-wrap: break-word; }
-    html, body { margin:0; min-height:100%; background:#050914; color:var(--ink); font-family:Pretendard,system-ui,sans-serif; overscroll-behavior:none; }
-    body { min-height:100vh; overflow-x:hidden; }
-    button, input { font:inherit; }
-    button { color:inherit; }
-    button, .card, .nebula-core { -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-    button:focus-visible, input:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }
-    #app { min-height:100vh; position:relative; isolation:isolate; overflow:hidden; }
-    .space { position:fixed; inset:0; z-index:-2; background:radial-gradient(ellipse at 50% -8%,#283063 0%,#111a3d 28%,#090f27 57%,#050914 100%); }
-    .space::before, .space::after { content:""; position:absolute; inset:-20%; pointer-events:none; background-image:radial-gradient(circle,rgba(220,246,255,.9) 0 1px,transparent 1.5px),radial-gradient(circle,rgba(178,162,255,.72) 0 1px,transparent 1.5px); background-size:79px 79px,131px 131px; background-position:13px 31px,73px 21px; opacity:.48; animation:drift 23s linear infinite; }
-    .space::after { transform:rotate(20deg) scale(1.25); opacity:.22; animation-duration:35s; animation-direction:reverse; }
-    @keyframes drift { to { translate:42px 76px; } }
-    .aurora { position:fixed; z-index:-1; width:62vw; height:45vw; min-width:480px; min-height:350px; border-radius:50%; filter:blur(58px); opacity:.20; pointer-events:none; animation:float 13s ease-in-out infinite alternate; }
-    .aurora.one { background:#3569dc; top:-21vw; left:-16vw; } .aurora.two { background:#9d43d1; bottom:-30vw; right:-17vw; animation-delay:-7s; }
-    @keyframes float { to { transform:translate(10vw,6vw) scale(1.13); } }
-    .screen { min-height:100vh; width:100%; display:none; opacity:0; transition:opacity .55s ease; }
-    .screen.active { display:flex; opacity:1; }
-    .title-screen { align-items:center; justify-content:center; padding:28px; }
-    .title-inner { text-align:center; max-width:680px; width:100%; animation:rise .8s cubic-bezier(.2,.85,.25,1) both; }
-    .eyebrow { margin:0 0 15px; color:var(--cyan); letter-spacing:.26em; font-size:.72rem; font-weight:800; }
-    .game-title { margin:0; font-size:clamp(3.3rem,11vw,7.5rem); line-height:.95; letter-spacing:-.065em; text-shadow:0 0 35px rgba(133,186,255,.4); background:linear-gradient(135deg,#fff 20%,#bdeeff 52%,#cfbaff); color:transparent; background-clip:text; -webkit-background-clip:text; }
-    .game-subtitle { margin:17px 0 39px; font-family:Georgia,serif; color:#bfcced; letter-spacing:.12em; font-size:clamp(.82rem,2.2vw,1.1rem); }
-    .title-actions { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
-    .button { position:relative; border:1px solid var(--line); border-radius:16px; background:rgba(17,31,62,.7); padding:13px 18px; cursor:pointer; font-weight:750; letter-spacing:-.02em; transition:transform .2s,background .2s,border-color .2s,box-shadow .2s; }
-    .button:hover { transform:translateY(-2px); border-color:rgba(164,228,255,.66); background:rgba(31,54,96,.86); }
-    .button.primary { min-width:220px; padding:18px 29px; border:0; overflow:hidden; background:linear-gradient(104deg,#54d8fa,#8e76ee 52%,#e87cc4); box-shadow:0 12px 36px rgba(98,144,255,.3),inset 0 1px rgba(255,255,255,.5); color:#06101f; font-size:1.07rem; }
-    .button.primary::after { content:""; position:absolute; inset:-80% -35%; background:linear-gradient(100deg,transparent 42%,rgba(255,255,255,.75) 50%,transparent 58%); animation:shine 3s ease-in-out infinite; }
-    .button.primary span { position:relative; z-index:1; }
-    @keyframes shine { 0%,52% { translate:-52% 0; } 78%,100% { translate:52% 0; } }
-    .button.compact { padding:10px 13px; border-radius:12px; font-size:.82rem; }
-    .title-progress { display:inline-flex; align-items:center; gap:7px; margin:20px 0 0; padding:8px 12px; border:1px solid rgba(150,218,255,.2); border-radius:999px; color:#b8d9ee; background:rgba(8,20,45,.4); font-size:.73rem; letter-spacing:.06em; }
-    .title-progress b { color:#f4fbff; }
-    .title-foot { margin:18px auto 0; color:#8b9aba; font-size:.75rem; line-height:1.7; }
-    .orbital { position:absolute; width:min(74vw,850px); aspect-ratio:1; border:1px solid rgba(160,195,255,.13); border-radius:50%; z-index:-1; animation:spin 29s linear infinite; }
-    .orbital::before, .orbital::after { content:""; position:absolute; width:12px; aspect-ratio:1; border-radius:50%; box-shadow:0 0 20px 8px #79dfff; background:#d2fbff; top:10%; left:26%; } .orbital::after { background:#d5aaff; box-shadow:0 0 20px 8px #aa72ff; top:auto; left:auto; bottom:13%; right:19%; }
-    @keyframes spin { to { rotate:360deg; } }
-    @keyframes rise { from { opacity:0; transform:translateY(18px) scale(.98); } }
-    .modal-layer, .cutscene, .toast-stack, .achievement-burst { position:fixed; inset:0; pointer-events:none; z-index:20; }
-    .modal-layer { display:flex; align-items:center; justify-content:center; padding:18px; background:rgba(1,5,14,.57); backdrop-filter:blur(7px); opacity:0; transition:opacity .25s; }
-    .modal-layer.open { pointer-events:auto; opacity:1; }
-    .modal { width:min(570px,100%); max-height:min(760px,calc(100dvh - 36px)); overflow-y:auto; background:linear-gradient(150deg,rgba(25,40,77,.98),rgba(8,16,36,.99)); border:1px solid rgba(183,214,255,.25); border-radius:24px; padding:28px; box-shadow:0 35px 100px rgba(0,0,0,.56); transform:translateY(16px) scale(.98); transition:transform .25s; }
-    .modal-layer.open .modal { transform:none; }
-    .modal h2 { margin:0 0 10px; font-size:1.5rem; letter-spacing:-.04em; }
-    .modal .lead { margin:0 0 22px; color:#b9cae7; line-height:1.65; }
-    .close { float:right; border:0; border-radius:9px; background:#172545; width:33px; height:33px; cursor:pointer; font-size:1.2rem; line-height:1; }
-    .terms { display:grid; gap:10px; margin:21px 0 26px; }
-    .term { display:flex; align-items:center; gap:12px; padding:13px; border-radius:13px; background:rgba(255,255,255,.055); color:#dbe7fc; font-size:.93rem; }
-    .term-no { color:var(--cyan); font-weight:800; font-size:.82rem; }
-    .modal-actions { display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
-    .verification { text-align:center; }
-    .verify-ring { width:152px; height:152px; border-radius:50%; display:grid; place-items:center; margin:24px auto 17px; position:relative; background:conic-gradient(var(--cyan) calc(var(--p, 0)*1%),rgba(104,132,186,.2) 0); box-shadow:0 0 0 9px rgba(86,202,255,.07),0 0 35px rgba(85,221,255,.13); }
-    .verify-ring::before { content:""; position:absolute; inset:8px; border-radius:50%; background:#0a142c; }
-    .hold-target { border:0; position:relative; z-index:1; width:126px; height:126px; border-radius:50%; background:radial-gradient(circle at 34% 25%,#5fdaff,#4a52d5); color:white; cursor:pointer; font-weight:800; box-shadow:inset 0 1px rgba(255,255,255,.6); user-select:none; -webkit-user-select:none; }
-    .hold-target.holding { transform:scale(.96); filter:brightness(1.17); } .hold-target.done { background:#42d8a1; }
-    .verify-note { color:#9fb1ce; margin:0; font-size:.88rem; line-height:1.6; }
-    .story-screen { align-items:center; justify-content:center; padding:24px; }
-    .story-box { width:min(790px,100%); min-height:315px; padding:clamp(25px,5vw,55px); display:flex; flex-direction:column; justify-content:flex-end; border:1px solid rgba(204,222,255,.18); background:linear-gradient(135deg,rgba(10,21,52,.75),rgba(8,11,29,.82)); border-radius:28px; box-shadow:0 30px 90px rgba(0,0,0,.34); position:relative; overflow:hidden; }
-    .story-box::before { content:""; position:absolute; width:260px; height:260px; right:-67px; top:-89px; background:radial-gradient(circle,rgba(137,206,255,.25),transparent 67%); }
-    .story-chapter { color:var(--cyan); letter-spacing:.17em; font-size:.71rem; font-weight:800; }
-    .story-speaker { margin:21px 0 9px; color:#b8c7f3; font-weight:800; font-size:.95rem; }
-    .story-line { margin:0; min-height:2.4em; font-size:clamp(1.34rem,4vw,2rem); line-height:1.45; letter-spacing:-.035em; }
-    .story-next { margin-top:33px; align-self:flex-end; color:#92a7ca; font-size:.76rem; }
-    .story-next kbd { font-family:inherit; border:1px solid #53668d; border-radius:5px; padding:2px 5px; }
-    .name-modal { text-align:center; } .name-modal input { width:100%; border:1px solid #3b568a; background:#07132a; color:white; padding:15px; border-radius:13px; text-align:center; font-size:1.1rem; outline:0; } .name-modal input::placeholder { color:#7a8cac; } .form-error { min-height:1.3em; margin:8px 0 0; color:#ff9fbc; font-size:.75rem; }
-    .game-screen { flex-direction:column; min-height:100vh; padding:clamp(14px,3vw,30px); }
-    .hud { display:flex; gap:12px; justify-content:space-between; align-items:center; width:min(1160px,100%); margin:0 auto; z-index:2; }
-    .brand { display:flex; align-items:center; gap:10px; min-width:0; } .brand-mark { width:39px; aspect-ratio:1; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,#69e4ff,#826be7); box-shadow:0 5px 15px rgba(97,184,255,.25); color:#071022; font-weight:900; font-family:Georgia,serif; } .brand-title { font-size:.95rem; font-weight:800; white-space:nowrap; } .brand-sub { display:block; color:#8da0c2; font-size:.67rem; font-weight:500; margin-top:2px; }
-    .progress-chip { padding:9px 12px; border:1px solid var(--line); background:rgba(10,22,48,.66); border-radius:12px; color:#bfd8ed; font-size:.79rem; white-space:nowrap; } .progress-chip b { color:#f1fbff; }
-    .game-main { width:min(920px,100%); flex:1; align-self:center; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:35px 0 20px; }
-    .sector { color:var(--cyan); letter-spacing:.24em; font-weight:800; font-size:.7rem; margin:0 0 10px; }
-    .game-main h1 { margin:0; font-size:clamp(2rem,6vw,4.2rem); letter-spacing:-.065em; line-height:1; text-shadow:0 5px 22px rgba(142,191,255,.27); }
-    .game-intro { color:#aebfda; max-width:570px; line-height:1.7; font-size:.93rem; margin:15px auto 25px; }
-    .nebula-core { width:clamp(195px,32vw,295px); aspect-ratio:1; border:0; border-radius:50%; cursor:pointer; position:relative; background:radial-gradient(circle at 35% 30%,#c0f6ff 0 3%,#4ad2f3 10%,#3944b6 31%,#1a164c 52%,#090e2b 69%,transparent 70%); box-shadow:0 0 0 1px rgba(167,240,255,.18),0 0 30px 8px rgba(59,185,255,.18),0 0 88px 20px rgba(104,71,254,.15); transition:transform .2s, filter .2s; }
-    .nebula-core::before, .nebula-core::after { content:""; position:absolute; inset:-17%; border:1px solid rgba(122,220,255,.25); border-radius:47% 53% 49% 51%; animation:spin 13s linear infinite; } .nebula-core::after { inset:-31%; border-color:rgba(199,146,255,.19); animation-duration:19s; animation-direction:reverse; }
-    .nebula-core:hover { filter:brightness(1.25); } .nebula-core:active { transform:scale(.93); }
-    .core-label { position:relative; z-index:1; display:block; text-shadow:0 2px 9px #050916; font-weight:800; font-size:.84rem; letter-spacing:.04em; }
-    .core-count { position:relative; z-index:1; display:block; font-size:.67rem; color:#c6eefa; margin-top:5px; }
-    .quick-actions { display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); width:min(720px,100%); gap:10px; margin-top:40px; }
-    .quick { min-height:88px; cursor:pointer; padding:13px; border:1px solid var(--line); border-radius:17px; background:rgba(15,29,60,.52); transition:.2s; } .quick:hover { background:rgba(30,55,102,.75); transform:translateY(-3px); border-color:rgba(158,230,255,.55); } .quick-icon { display:block; width:25px; height:25px; margin:0 auto 7px; opacity:.85; } .quick b { display:block; font-size:.84rem; } .quick span { color:#8fa5c8; font-size:.7rem; display:block; margin-top:4px; }
-    .status-bar { width:min(900px,100%); display:flex; justify-content:center; color:#8294b2; font-size:.72rem; margin:10px auto 0; min-height:20px; text-align:center; }
-    .quick.attendance-ready { border-color:rgba(255,228,136,.7); background:linear-gradient(135deg,rgba(119,72,191,.7),rgba(171,115,48,.67)); animation:ready-glow 1.4s ease-in-out infinite alternate; } @keyframes ready-glow { to { box-shadow:0 0 24px rgba(255,213,102,.45); } }
-    .toast-stack { inset:auto 0 auto; top:max(14px,env(safe-area-inset-top)); display:flex; flex-direction:column; align-items:center; gap:9px; z-index:35; }
-    .toast { width:min(430px,calc(100% - 24px)); display:grid; grid-template-columns:45px 1fr; gap:11px; text-align:left; padding:12px; border:1px solid rgba(207,228,255,.32); border-radius:16px; background:linear-gradient(105deg,rgba(18,36,76,.97),rgba(29,20,68,.97)); box-shadow:0 15px 35px rgba(0,0,0,.32); animation:toast-in .52s cubic-bezier(.16,.95,.3,1), toast-out .4s ease 4.5s forwards; }
-    @keyframes toast-in { from { opacity:0; transform:translateY(-25px) scale(.95); } } @keyframes toast-out { to { opacity:0; transform:translateY(-12px) scale(.96); } }
-    .toast-icon, .ach-icon { width:44px; height:44px; border-radius:13px; display:grid; place-items:center; background:linear-gradient(135deg,rgba(126,223,255,.25),rgba(166,122,255,.2)); border:1px solid rgba(255,255,255,.13); } .toast-icon svg,.ach-icon svg,.quick-icon { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-    .toast-kicker { color:#81def9; font-size:.65rem; font-weight:800; letter-spacing:.13em; } .toast-title { font-size:.95rem; font-weight:800; margin:3px 0; } .toast-desc { font-size:.71rem; color:#b2c4df; line-height:1.35; }
-    .collection-modal { width:min(870px,100%); } .collection-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-right:43px; } .collection-head h2 { margin:0; } .collection-count { color:#a2bbdd; font-size:.79rem; white-space:nowrap; }
-    .collection-filter { display:flex; gap:7px; flex-wrap:wrap; margin:21px 0 14px; } .filter { border:1px solid var(--line); background:#10203f; color:#aebfdb; border-radius:99px; padding:7px 10px; font-size:.72rem; cursor:pointer; } .filter.active { border-color:#67dfff; background:#173c66; color:#dcf7ff; }
-    .ach-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .card { min-width:0; text-align:left; display:flex; gap:10px; padding:13px; border-radius:15px; border:1px solid rgba(174,202,255,.13); background:rgba(255,255,255,.04); cursor:pointer; transition:.2s; } .card:hover { background:rgba(255,255,255,.08); transform:translateY(-1px); } .card.locked { filter:saturate(.25); } .card.locked .ach-icon { color:#93a1b7; background:rgba(117,135,160,.12); } .card.locked .ach-icon svg { opacity:.72; } .card-copy { min-width:0; flex:1; } .tier { font-size:.62rem; font-weight:850; letter-spacing:.1em; } .card-title { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-weight:800; margin:3px 0; font-size:.86rem; } .card-desc { color:#9fb0ca; font-size:.7rem; line-height:1.4; }
-    .basic { color:var(--basic); } .rare { color:var(--rare); } .super { color:var(--super); } .mythic { color:var(--myth); } .legendary { color:var(--legendary); } .legend { color:var(--legend); text-shadow:0 0 10px rgba(255,232,141,.5); } .hidden { color:var(--hidden); } .unknown { color:var(--unknown); text-shadow:0 0 11px rgba(255,255,255,.65); }
-    .hint-modal { width:min(430px,100%); text-align:center; } .hint-glyph { width:72px; height:72px; display:grid; place-items:center; margin:5px auto 16px; border:1px solid #5873aa; border-radius:50%; font-size:2.4rem; color:#bfeeff; font-family:Georgia,serif; } .hint-text { margin:13px auto 22px; color:#c0d0e6; line-height:1.65; }
-    .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:21px; } .menu-item { text-align:left; border:1px solid var(--line); border-radius:15px; padding:15px; cursor:pointer; background:rgba(255,255,255,.045); transition:.2s; } .menu-item:hover { border-color:rgba(142,222,255,.6); background:rgba(41,66,110,.6); } .menu-item b { display:block; font-size:.9rem; } .menu-item small { color:#9db0ce; display:block; line-height:1.45; margin-top:5px; } .setting-row { margin:21px 0 0; padding:15px; border-radius:14px; background:rgba(0,0,0,.17); display:flex; justify-content:space-between; gap:12px; align-items:center; } .setting-row b { display:block; font-size:.87rem; } .setting-row span { color:#9cb0cd; font-size:.72rem; display:block; margin-top:3px; }
-    .discover-tabs { display:flex; gap:8px; margin:18px 0 13px; } .discover-tab { flex:1; border:1px solid var(--line); border-radius:11px; padding:9px; background:#102040; color:#c6d9f4; cursor:pointer; } .discover-tab.active { background:#245179; border-color:#79dfff; color:white; } .discover-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; } .discover-card { min-height:82px; border:1px solid rgba(173,207,255,.18); border-radius:13px; padding:9px; text-align:left; background:linear-gradient(145deg,rgba(45,64,116,.54),rgba(12,23,53,.7)); cursor:pointer; } .discover-card:hover { border-color:#8ce9ff; transform:translateY(-2px); } .discover-card b { display:block; font-size:.76rem; } .discover-card small { display:block; color:#9fb6dc; font-size:.62rem; margin-top:5px; line-height:1.3; } .discover-card.found { border-color:rgba(121,235,202,.6); background:linear-gradient(145deg,rgba(35,110,100,.55),rgba(14,44,56,.76)); }
-    .switch { width:48px; height:27px; padding:3px; flex:0 0 auto; border:1px solid #476088; background:#142340; border-radius:99px; cursor:pointer; } .switch i { display:block; height:19px; width:19px; background:#93a4c1; border-radius:50%; transition:.25s; } .switch.on { background:#1f7395; border-color:#62ddff; } .switch.on i { transform:translateX(20px); background:white; }
-    .keypad-display { min-height:53px; display:flex; align-items:center; justify-content:center; margin:17px 0; background:#061127; border:1px solid #314e80; border-radius:13px; color:#e5f9ff; letter-spacing:.23em; font-weight:800; overflow:hidden; } .keypad { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; } .key { height:45px; border:1px solid #354e7d; background:#14244a; border-radius:11px; cursor:pointer; font-weight:800; } .key:hover { background:#26477c; } .key.wide { grid-column:span 2; } .key.confirm { background:linear-gradient(135deg,#3878ba,#7665cf); border:0; }
-    .ad-overlay { position:fixed; inset:0; z-index:45; display:none; flex-direction:column; align-items:center; justify-content:center; padding:24px; background:radial-gradient(circle at 35% 25%,#3e237b 0,#111a43 35%,#040711 95%); overflow:hidden; cursor:pointer; } .ad-overlay.show { display:flex; } .ad-overlay::after { content:""; position:absolute; inset:0; background:repeating-linear-gradient(115deg,transparent 0 75px,rgba(113,225,255,.04) 75px 77px); animation:slide-bg 5s linear infinite; } @keyframes slide-bg { to { background-position:250px 0; } } .ad-clock { position:absolute; top:max(18px,env(safe-area-inset-top)); right:18px; z-index:1; padding:10px 14px; background:rgba(0,0,0,.36); border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:.8rem; } .ad-card { position:relative; z-index:1; text-align:center; animation:ad-float 2.5s ease-in-out infinite alternate; } @keyframes ad-float { to { transform:translateY(-10px); } } .ad-badge { width:90px; aspect-ratio:1; display:grid; place-items:center; margin:auto; border:3px solid #f6dc63; border-radius:27px; background:linear-gradient(135deg,#ffcb4d,#ff7b5d); color:#192051; font-size:2rem; font-weight:900; font-family:Georgia,serif; box-shadow:0 0 35px #ffab4a; } .ad-card h2 { margin:23px 0 9px; font-size:clamp(2.15rem,8vw,4.8rem); line-height:1; letter-spacing:-.07em; } .ad-card p { color:#c9d8ff; margin:0; } .ad-click { margin-top:28px; color:#8ce8ff; font-size:.8rem; } .ad-click u { text-underline-offset:4px; }
-    .donate-body { white-space:pre-wrap; margin:18px 0 0; padding:15px; min-height:130px; max-height: 50vh; overflow-y:auto; border-radius:13px; background:#071229; color:#cbdbf3; font-size:.86rem; line-height:1.7; }
-    .admin-list { max-height:55vh; overflow:auto; display:grid; gap:7px; margin-top:17px; } .admin-row { background:rgba(255,255,255,.055); border-radius:9px; padding:9px 11px; font-size:.78rem; color:#c1d1e9; } .admin-row b { color:#f3f7ff; }
-    .cutscene { display:none; z-index:50; background:rgba(2,5,17,.93); align-items:center; justify-content:center; overflow:hidden; } .cutscene.show { display:flex; animation:cut-in .35s ease; } @keyframes cut-in { from { opacity:0; } } .cutscene::before,.cutscene::after { content:""; position:absolute; width:130vmax; aspect-ratio:1; border:1px solid rgba(255,220,124,.26); border-radius:50%; animation:spin 4s linear infinite; } .cutscene::after { width:86vmax; border-color:rgba(176,137,255,.35); animation-direction:reverse; animation-duration:2.8s; } .cut-content { position:relative; z-index:1; text-align:center; padding:30px; animation:burst-text 2.8s ease both; } @keyframes burst-text { 0% { opacity:0; transform:scale(.3); } 18% { opacity:1; transform:scale(1.08); } 65% { opacity:1; transform:scale(1); } 100% { opacity:0; transform:scale(1.2); } } .cut-kicker { font-size:.8rem; letter-spacing:.35em; color:#ffe594; font-weight:900; } .cut-content h2 { margin:11px 0; font-size:clamp(3rem,11vw,7rem); letter-spacing:-.08em; background:linear-gradient(130deg,#fff9c7,#ffbc51,#e4b9ff); color:transparent; background-clip:text; -webkit-background-clip:text; } .cut-content p { margin:0; color:#e1e7ff; }
-    .loading-overlay, .sixseven-overlay { position:fixed; inset:0; z-index:62; display:none; align-items:center; justify-content:center; overflow:hidden; background:rgba(3,8,22,.91); backdrop-filter:blur(12px); } .loading-overlay.show, .sixseven-overlay.show { display:flex; } .loading-box { text-align:center; width:min(280px,80vw); } .loading-mark { width:54px; height:54px; margin:0 auto 18px; border:2px solid rgba(151,227,255,.2); border-top-color:#82e7ff; border-right-color:#ba98ff; border-radius:50%; animation:spin .85s linear infinite; } .loading-box b { letter-spacing:.18em; font-size:.73rem; } .loading-line { height:3px; background:#122446; border-radius:99px; overflow:hidden; margin-top:13px; } .loading-line i { display:block; width:40%; height:100%; background:linear-gradient(90deg,#6be5ff,#b991ff); animation:fake-load .9s ease-in-out infinite; } @keyframes fake-load { to { transform:translateX(150%); } }
-    .sixseven-overlay { z-index:65; background:radial-gradient(circle,#39206c 0,#0b1030 45%,#02040e 100%); } .sixseven-word { position:absolute; color:#f7dcff; font-size:clamp(2rem,7vw,5rem); font-weight:900; letter-spacing:-.09em; text-shadow:0 0 22px #de65ff,0 0 48px #746aff; animation:run-67 var(--time) linear infinite alternate; } @keyframes run-67 { from { transform:translate(var(--x1),var(--y1)) rotate(-18deg) scale(.7); } to { transform:translate(var(--x2),var(--y2)) rotate(18deg) scale(1.25); } }
-    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
-    @media (max-width:600px) { .title-screen { padding:20px; } .modal { padding:23px 19px; border-radius:20px; } .ach-list { grid-template-columns:1fr; } .quick-actions { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; } .quick { padding:10px 5px; min-height:79px; } .quick b { font-size:.74rem; } .quick span { font-size:.63rem; } .brand-sub { display:none; } .game-main { padding-top:27px; } .story-box { min-height:360px; } .menu-grid { grid-template-columns:1fr; } }
-  </style>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans KR', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
+
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/maingamebackgroundimg.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat; z-index: -2;
+        }
+        .bg-dim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0.88) 100%); backdrop-filter: blur(6px); z-index: -1; }
+
+        header { padding: 3rem 1rem 1.8rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .logo-container { position: relative; margin-bottom: 1.2rem; cursor: pointer; }
+        .logo-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 110px; height: 110px; background: radial-gradient(circle, rgba(56, 189, 248, 0.6) 0%, rgba(168, 85, 247, 0.3) 70%, transparent 100%); border-radius: 50%; filter: blur(15px); animation: pulseGlow 3s infinite alternate; }
+        @keyframes pulseGlow { 0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } }
+        .logo-img { position: relative; width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.25); box-shadow: 0 0 30px rgba(56, 189, 248, 0.5); transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .logo-container:hover .logo-img { transform: scale(1.12) rotate(15deg); }
+
+        .main-title-kr { font-size: 2.8rem; font-weight: 800; background: linear-gradient(135deg, #38bdf8 0%, #c084fc 50%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .main-title-en { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 800; letter-spacing: 6px; color: #94a3b8; margin-bottom: 0.8rem; }
+        .sub-title { font-size: 1rem; color: #cbd5e1; background: rgba(30, 41, 59, 0.5); padding: 0.4rem 1.2rem; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(5px); }
+
+        .quick-nav { display: flex; gap: 0.8rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .nav-btn { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.12); color: #e2e8f0; padding: 0.5rem 1rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; backdrop-filter: blur(8px); transition: all 0.25s ease; }
+        .nav-btn:hover { background: rgba(56, 189, 248, 0.2); border-color: rgba(56, 189, 248, 0.5); color: #38bdf8; transform: translateY(-2px); }
+
+        main { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+        .section-title { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; }
+        .section-title::before { content: ''; width: 5px; height: 20px; background: linear-gradient(to bottom, #38bdf8, #a855f7); border-radius: 3px; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+
+        .game-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px dashed rgba(255, 255, 255, 0.18); border-radius: 22px; padding: 1.6rem; height: 220px; display: flex; flex-direction: column; justify-content: space-between; opacity: 0.7; }
+
+        footer { text-align: center; padding: 2.5rem 1rem; color: #64748b; font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(15, 23, 42, 0.6); }
+
+        /* 최초 진입 인트로 화면 (간지나는 시작하기 오버레이) 스타일 */
+        #introOverlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+            z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        #introOverlay.fade-out { opacity: 0; visibility: hidden; }
+
+        .intro-content { text-align: center; display: flex; flex-direction: column; align-items: center; padding: 0 1.5rem; width: 100%; max-width: 400px; }
+        .intro-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 40px rgba(56, 189, 248, 0.4); margin-bottom: 1.5rem; animation: pulseGlow 2s infinite alternate; }
+        .intro-title { font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #38bdf8 0%, #c084fc 50%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.3rem; }
+        .intro-subtitle { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 5px; color: #94a3b8; margin-bottom: 2.5rem; }
+
+        .start-btn {
+            width: 100%; padding: 1.1rem; font-size: 1.1rem; font-weight: 800; color: #fff;
+            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%); border: none; border-radius: 16px;
+            cursor: pointer; box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4); transition: all 0.3s ease;
+            letter-spacing: 2px;
+        }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56, 189, 248, 0.6); filter: brightness(1.1); }
+
+        /* 가짜 로딩 바 컨테이너 */
+        .loading-container { width: 100%; margin-top: 1.5rem; display: none; flex-direction: column; align-items: center; gap: 0.6rem; }
+        .loading-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); }
+        .loading-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #c084fc); transition: width 0.1s linear; }
+        .loading-text { font-size: 0.85rem; color: #94a3b8; font-family: 'Orbitron', sans-serif; }
+
+        /* 모달 공통 스타일 */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-box {
+            background: #1e293b; border-radius: 24px; width: 90%; max-width: 440px; padding: 2rem; text-align: center; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); max-height: 85vh; display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .modal-badge { display: inline-block; padding: 0.25rem 0.8rem; font-size: 0.75rem; font-weight: 700; border-radius: 20px; margin: 0 auto 0.8rem; text-transform: uppercase; width: fit-content; }
+        .modal-icon { font-size: 3rem; margin-bottom: 0.5rem; line-height: 1; }
+        .modal-title { font-size: 1.35rem; font-weight: 800; color: #f8fafc; margin-bottom: 0.8rem; }
+        .modal-message { font-size: 0.92rem; color: #cbd5e1; margin-bottom: 1.5rem; line-height: 1.6; text-align: left; overflow-y: auto; background: rgba(15, 23, 42, 0.5); padding: 1rem; border-radius: 12px; }
+        .modal-message ul, .modal-message ol { padding-left: 1.2rem; }
+        
+        .modal-btn { width: 100%; border: none; padding: 0.85rem; font-size: 0.95rem; font-weight: 700; border-radius: 12px; cursor: pointer; color: #fff; transition: all 0.2s ease; }
+        .modal-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
+
+        /* 메뉴 전용 스타일 */
+        .menu-options { display: flex; flex-direction: column; gap: 0.8rem; margin: 1.2rem 0; }
+        .menu-item-btn { width: 100%; padding: 0.9rem 1rem; font-size: 0.95rem; font-weight: 600; text-align: center; border-radius: 12px; background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(255, 255, 255, 0.12); color: #f8fafc; cursor: pointer; transition: all 0.2s ease; }
+        .menu-item-btn:hover { background: rgba(56, 189, 248, 0.2); border-color: #38bdf8; color: #38bdf8; transform: translateY(-2px); }
+
+        @keyframes anim-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+        @keyframes anim-pulse { 0% { transform: scale(1); } 100% { transform: scale(1.18); } }
+    </style>
 </head>
 <body>
-  <div id="app">
-    <div class="space"></div><div class="aurora one"></div><div class="aurora two"></div>
-    <main id="titleScreen" class="screen title-screen active" aria-label="Title">
-      <div class="orbital" aria-hidden="true"></div>
-      <div class="title-inner">
-        <p class="eyebrow">A TINY UNIVERSE OF MOMENTS</p>
-        <h1 class="game-title" data-i18n="gameTitle">자회의 업적</h1>
-        <p class="game-subtitle">Jahoe's Achievements</p>
-        <div class="title-actions"><button class="button primary" id="startBtn"><span data-i18n="start">시작하기</span></button><button class="button compact" id="langBtn" aria-label="Language">KO / EN</button></div>
-        <p class="title-progress"><span data-i18n="titleRecord">기록</span> <b id="titleProgress">0 / 67</b></p>
-        <p class="title-foot" data-i18n="titleFoot">작은 행동 하나가, 새로운 업적의 시작이 될지도 몰라요.</p>
-      </div>
+
+    <!-- 처음 접속 시 뜨는 간지나는 시작하기 화면 (인트로) -->
+    <div id="introOverlay">
+        <div class="intro-content">
+            <img src="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png" alt="Logo" class="intro-logo">
+            <h1 class="intro-title">자회:이기다</h1>
+            <div class="intro-subtitle">JAHOE:WIN</div>
+            
+            <button class="start-btn" id="startBtn" onclick="handleGameStart()">START</button>
+            
+            <!-- 가짜 로딩바 -->
+            <div class="loading-container" id="loadingContainer">
+                <div class="loading-bar-bg">
+                    <div class="loading-bar-fill" id="loadingBarFill"></div>
+                </div>
+                <div class="loading-text" id="loadingText">SYSTEM LOADING... 0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 배경음악 오디오 (지정된 GitHub 경로 및 무한 반복 loop 설정) -->
+    <audio id="bgmAudio" loop src="https://raw.githubusercontent.com/jihuluckyman/jahoe/main/assets/sound/bgm.mp3"></audio>
+
+    <div class="bg-overlay"></div>
+    <div class="bg-dim"></div>
+
+    <header>
+        <!-- 상단 로고(합성기 모양 버튼): 클릭 시 공지 표시 -->
+        <div class="logo-container" onclick="fetchAndShowNotice()">
+            <div class="logo-glow"></div>
+            <img src="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png" alt="Jahoe Logo" class="logo-img">
+        </div>
+        <h1 class="main-title-kr">자회:이기다</h1>
+        <div class="main-title-en">JAHOE:WIN</div>
+        <p class="sub-title">미니게임 커뮤니티 플랫폼</p>
+
+        <div class="quick-nav">
+            <!-- 메뉴 버튼 -->
+            <button class="nav-btn" onclick="openMenuModal()">⚙️ 메뉴</button>
+            <button class="nav-btn" onclick="fetchAndShowNotice()">📢 공지사항 보기</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="section-title">게임 로비</div>
+        <div class="game-grid">
+            <div class="game-card"><p>🎮 신규 미니게임 준비 중입니다...</p></div>
+        </div>
     </main>
 
-    <section id="storyScreen" class="screen story-screen" aria-live="polite">
-      <div class="story-box" id="storyAdvance" role="button" tabindex="0" aria-label="Next dialogue">
-        <div class="story-chapter" id="storyChapter">PROLOGUE</div><div class="story-speaker" id="storySpeaker"></div><p class="story-line" id="storyLine"></p><div class="story-next" data-i18n-html="storyNext">클릭 또는 <kbd>Space</kbd>로 계속</div>
-      </div>
-    </section>
+    <footer>
+        <p>&copy; 2026 자회:이기다 (JAHOE:WIN). All rights reserved.</p>
+    </footer>
 
-    <section id="gameScreen" class="screen game-screen" aria-label="Game">
-      <header class="hud"><div class="brand"><div class="brand-mark">J</div><div><div class="brand-title" data-i18n="gameTitle">자회의 업적</div><span class="brand-sub">Jahoe's Achievements</span></div></div><div class="progress-chip" id="progressChip"></div><button class="button compact" id="menuBtn" data-i18n="menu">메뉴</button></header>
-      <div class="game-main"><p class="sector" data-i18n="sector">UNKNOWN SECTOR · 01</p><h1 data-i18n="mainTitle">업적의 우주</h1><p class="game-intro" data-i18n="mainIntro">자회가 남긴 단서는 이곳 어딘가에 흩어져 있어요. 무엇이든 한 번 눌러 보세요.</p>
-        <button id="coreBtn" class="nebula-core" aria-label="Mysterious core"><span class="core-label" data-i18n="coreLabel">미지의 파편</span><span class="core-count" id="coreCount">0 / 25</span></button>
-        <div class="quick-actions">
-          <button class="quick" id="collectionBtn"><svg class="quick-icon" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A2.5 2.5 0 0 0 17.5 16H4z"/><path d="M4 5.5V21h13.5"/><path d="M8 7h8M8 10h6"/></svg><b data-i18n="collection">업적 도감</b><span data-i18n="collectionSub">단서와 기록</span></button>
-          <button class="quick" id="signalBtn"><svg class="quick-icon" viewBox="0 0 24 24"><path d="M3 12h3l2-6 4 12 2-6h7"/></svg><b data-i18n="signal">신호 탐색</b><span data-i18n="signalSub">아주 희미한 반응</span></button>
-          <button class="quick" id="menuQuickBtn"><svg class="quick-icon" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><b data-i18n="menu">메뉴</b><span data-i18n="menuSub">설정과 비밀</span></button>
-          <button class="quick" id="attendanceBtn"><svg class="quick-icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h3"/></svg><b id="attendanceTitle">출석체크</b><span id="attendanceSub">매일 1번</span></button>
-          <button class="quick" id="exploreBtn"><svg class="quick-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m12 2 1.5 5.5L19 5l-2.5 5.5L22 12l-5.5 1.5L19 19l-5.5-2.5L12 22l-1.5-5.5L5 19l2.5-5.5L2 12l5.5-1.5L5 5l5.5 2.5z"/></svg><b data-i18n="explore">탐험실</b><span data-i18n="exploreSub">별자리와 물건</span></button>
+    <!-- 메뉴 모달 레이어 -->
+    <div class="modal-overlay" id="menuModal">
+        <div class="modal-box" style="max-width: 340px;">
+            <div class="modal-icon">⚙️</div>
+            <h3 class="modal-title">메뉴</h3>
+            <div class="menu-options">
+                <button class="menu-item-btn" id="bgmToggleBtn" onclick="toggleBgm()">🔊 배경음악 끄기</button>
+                <button class="menu-item-btn" onclick="closeMenuModal(); fetchAndShowNotice();">📢 공지사항 보기</button>
+            </div>
+            <button class="modal-btn" onclick="closeMenuModal()" style="background: #64748b; margin-top: 0.5rem;">닫기</button>
         </div>
-      </div><div class="status-bar" id="statusBar"></div>
-    </section>
-  </div>
-  <div class="toast-stack" id="toastStack" aria-live="assertive"></div>
-  <div class="modal-layer" id="modalLayer" role="dialog" aria-modal="true" aria-label="Dialog"><div class="modal" id="modalContent"></div></div>
-  <div class="ad-overlay" id="adOverlay" role="dialog" aria-modal="true"><div class="ad-clock"><span data-i18n="adRemaining">광고 종료까지</span> <b id="adClock">30</b>s</div><div class="ad-card"><div class="ad-badge">J</div><h2 data-i18n-html="adHeadline">꿀잼 유튜브<br>@자회자회</h2><p data-i18n="adCopy">지금 구독하고 새로운 이야기를 만나 보세요.</p><p class="ad-click" data-i18n-html="adClick">화면을 눌러 <u>채널로 이동</u></p></div></div>
-  <div class="cutscene" id="cutscene"><div class="cut-content"><div class="cut-kicker" id="cutTier">LEGENDARY ACHIEVEMENT</div><h2 id="cutTitle"></h2><p id="cutDesc"></p></div></div>
-  <div class="loading-overlay" id="loadingOverlay" aria-live="polite"><div class="loading-box"><div class="loading-mark"></div><b data-i18n="loadingWorld">우주를 불러오는 중</b><div class="loading-line"><i></i></div></div></div>
-  <div class="sixseven-overlay" id="sixsevenOverlay" aria-live="assertive"></div>
+    </div>
 
-  <script>
-  (() => {
-    'use strict';
-    const DONATE_URL = 'https://raw.githubusercontent.com/jihuluckyman/jahoe/main/assets/donate.txt';
-    const ACHIEVEMENT_SOUND = 'https://raw.githubusercontent.com/jihuluckyman/jahoe/main/assets/audio/Achievement.wav';
-    const YOUTUBE_URL = 'https://youtube.com/@%EC%9E%90%ED%9A%8C%EC%9E%90%ED%9A%8C';
-    const $ = s => document.querySelector(s);
-    const state = { lang:'ko', name:'', unlocked:[], clicks:0, coreClicks:0, collectionOpens:0, signalScans:0, menuOpens:0, hintReads:0, attendanceDays:0, lastAttendance:0, attendanceReady:false, languageSeen:[], settings:{bgm:true}, started:false, voidStarted:false, freeMode:false, filter:'all', holdTimer:null, holdStart:0, adTimer:null, audioContext:null, bgmTimer:null, storyIndex:0, storyMode:'opening', activeModal:null };
-    const cutQueue = []; let cutscenePlaying = false;
-    const texts = {
-      ko:{ gameTitle:'자회의 업적', start:'시작하기', continue:'여정 계속하기', titleRecord:'기록', titleFoot:'67개의 서로 다른 기록을 10일의 출석 여정과 함께 모아 보세요.', loadingWorld:'우주를 불러오는 중', termsTitle:'여정을 시작하기 전에', termsLead:'이 작은 우주를 안전하고 즐겁게 탐험하기 위한 약속이에요.', agree:'동의합니다', term1:'버그를 악용하지 않습니다.', term2:'해킹을 하지 않습니다.', term3:'게임을 복제하지 않습니다.', verifyTitle:'로봇이 아닌지 확인할게요', verifyHold:'3초 동안 꾹 누르기', verifying:'확인 중…', verified:'확인 완료', verifyNote:'인증 방법: 아래 빛나는 원을 손가락 또는 마우스로 3초 동안 놓지 말고 꾹 눌러 주세요.', storyNext:'클릭 또는 <kbd>Space</kbd>로 계속', yourName:'당신의 이름은 무엇인가요?', nameLead:'자회에게 당신을 소개해 주세요.', namePlaceholder:'이름 입력', nameConfirm:'소개하기', menu:'메뉴', sector:'UNKNOWN SECTOR · 01', mainTitle:'업적의 우주', mainIntro:'자회가 남긴 단서는 이곳 어딘가에 흩어져 있어요. 무엇이든 한 번 눌러 보세요.', coreLabel:'미지의 파편', collection:'업적 도감', collectionSub:'단서와 기록', signal:'신호 탐색', signalSub:'아주 희미한 반응', attendance:'출석체크', attendanceSub:'매일 1번', attendanceQuestion:'?', explore:'탐험실', exploreSub:'별자리와 물건', menuSub:'설정과 비밀', unlocked:'해제됨', of:'/', collectionTitle:'업적 도감', all:'전체', obtained:'획득', locked:'미획득', hint:'힌트', noHint:'힌트가 존재하지 않습니다', close:'닫기', menuTitle:'우주 메뉴', code:'코드 입력', codeSub:'가상 키보드로 비밀 코드 입력', ad:'광고 시청', adSub:'30초 후 작은 보상을 받아요', donate:'후원하기', donateSub:'자회에게 마음을 전하기', bgm:'배경 음악', bgmSub:'은은한 우주 신호를 재생합니다', codeTitle:'시크릿 코드', codeLead:'발견한 코드를 가상 키보드로 입력해 보세요.', erase:'지우기', confirm:'확인', adRemaining:'광고 종료까지', adHeadline:'꿀잼 유튜브<br>@자회자회', adCopy:'지금 구독하고 새로운 이야기를 만나 보세요.', adClick:'화면을 눌러 <u>채널로 이동</u>', donateTitle:'후원 안내', loading:'안내를 불러오는 중…', fetchFail:'안내를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.', adminTitle:'관리자 전용 단서', adminLead:'모든 미획득 업적의 단서를 열람할 수 있습니다.', signalMsg:'신호가 조금 더 선명해졌어요. 우주를 계속 만져 보세요.', status:'오늘도 자회의 부탁을 들어주고 있어요.', nameRequired:'이름을 1~16자로 입력해 주세요.', codeEmpty:'코드를 입력해 주세요.', codeWrong:'아직 아무 반응이 없어요.', adDone:'광고 시청 보상이 도착했습니다.', beginTitle:'새로운 기록', startAuto:'이제 업적을 모아 볼 시간이에요.', checkedIn:'일수 출첵!', waitAttendance:'다음 출석까지', attendanceReady:'10일째 기록이 사라지고 물음표가 남았습니다.', voidTitle:'공허의 자유 모드', voidIntro:'모든 기록이 끝난 곳. 이제 이 우주는 당신의 놀이터입니다.', freeMode:'자유 모드 해제', exploreTabs:['별자리','잡동사니'], found:'발견됨', notFound:'미발견' },
-      en:{ gameTitle:"Jahoe's Achievements", start:'Begin', continue:'Continue journey', titleRecord:'RECORD', titleFoot:'Gather 67 distinct records, including a ten-day attendance journey.', loadingWorld:'LOADING THE UNIVERSE', termsTitle:'Before the journey begins', termsLead:'A few promises for a safe, delightful exploration.', agree:'I agree', term1:'Do not exploit bugs.', term2:'Do not hack.', term3:'Do not copy this game.', verifyTitle:'Let’s check that you’re human', verifyHold:'Hold for 3 seconds', verifying:'Checking…', verified:'Verified', verifyNote:'How to verify: hold the glowing circle with a finger or mouse for three full seconds.', storyNext:'Click or press <kbd>Space</kbd> to continue', yourName:'What is your name?', nameLead:'Introduce yourself to Jahoe.', namePlaceholder:'Your name', nameConfirm:'Introduce myself', menu:'Menu', sector:'UNKNOWN SECTOR · 01', mainTitle:'The achievement universe', mainIntro:'Jahoe’s clues are scattered somewhere in here. Try touching anything once.', coreLabel:'Unknown fragment', collection:'Collection', collectionSub:'Clues and records', signal:'Scan signal', signalSub:'A very faint response', attendance:'Attendance', attendanceSub:'Once per day', attendanceQuestion:'?', explore:'Explorer room', exploreSub:'Constellations & objects', menuSub:'Settings and secrets', unlocked:'Unlocked', of:'/', collectionTitle:'Achievement collection', all:'All', obtained:'Obtained', locked:'Locked', hint:'Hint', noHint:'No hint exists.', close:'Close', menuTitle:'Universe menu', code:'Enter code', codeSub:'A virtual keyboard for secret codes', ad:'Watch an ad', adSub:'A small reward after 30 seconds', donate:'Donate', donateSub:'Send your support to Jahoe', bgm:'Background music', bgmSub:'Play a gentle cosmic signal', codeTitle:'Secret code', codeLead:'Use the virtual keyboard to enter a code you have found.', erase:'Erase', confirm:'Confirm', adRemaining:'Ad ends in', adHeadline:'Fun YouTube<br>@JahoeJahoe', adCopy:'Subscribe now and meet new stories.', adClick:'Tap the screen to <u>visit the channel</u>', donateTitle:'Donation information', loading:'Loading information…', fetchFail:'Could not load the information. Please try again shortly.', adminTitle:'Administrator clues', adminLead:'You may view every locked achievement clue.', signalMsg:'The signal is getting clearer. Keep touching the universe.', status:'You are helping Jahoe today, too.', nameRequired:'Please enter 1–16 characters for your name.', codeEmpty:'Enter a code first.', codeWrong:'Nothing is responding yet.', adDone:'Your ad reward has arrived.', beginTitle:'A new record', startAuto:'It is time to gather achievements.', checkedIn:'day check-in!', waitAttendance:'Next check-in in', attendanceReady:'On day ten, the record vanished and left a question mark.', voidTitle:'Void free mode', voidIntro:'All records have ended. This universe is your playground now.', freeMode:'Free mode unlocked', exploreTabs:['Constellations','Objects'], found:'Found', notFound:'Unknown' }
-    };
-    function makeDiscoveries(prefix, tier, entries, place) { return entries.map(([id,ko,en])=>({id:`${prefix}-${id}`,tier,ko,en,dko:`${ko}을(를) 발견했다.`,den:`You discovered ${en}.`,hko:`탐험실의 ${place} 탭에서 직접 찾아보세요.`,hen:`Search for it directly in the ${place} tab of the Explorer room.`})); }
-    const achievements = [
-      {id:'start', tier:'basic', ko:'자회: 시작', en:'Jahoe: Beginning', dko:'자회와의 낯선 여정을 시작했다.', den:'You began a strange journey with Jahoe.', hko:'여정을 시작해 보세요.', hen:'Start the journey.'},
-      {id:'click10', tier:'basic', ko:'클릭왕', en:'Click Monarch', dko:'화면을 10번 눌렀다.', den:'You touched the screen ten times.', hko:'세상은 열 번의 터치로 조금 달라집니다.', hen:'Ten touches can change a small world.'},
-      {id:'collection', tier:'basic', ko:'기록자', en:'The Recorder', dko:'처음으로 업적 도감을 열었다.', den:'You opened the collection for the first time.', hko:'기록이 모인 곳을 찾아보세요.', hen:'Find where the records are kept.'},
-      {id:'firsthint', tier:'rare', ko:'호기심 많은 사람', en:'Curious Mind', dko:'미획득 업적의 힌트를 읽었다.', den:'You read a clue for a locked achievement.', hko:'잠긴 기록 하나를 살펴보세요.', hen:'Inspect one locked record.'},
-      {id:'signal', tier:'rare', ko:'응답하는 우주', en:'A Responding Universe', dko:'희미한 신호에 귀를 기울였다.', den:'You listened to a faint signal.', hko:'우주에서 들려오는 신호를 찾아보세요.', hen:'Find the signal in the universe.'},
-      {id:'music', tier:'rare', ko:'음악 감상', en:'Music Listener', dko:'우주에 흐르는 음악을 바꿨다.', den:'You changed the music flowing through space.', hko:'메뉴의 환경설정을 둘러보세요.', hen:'Look through the settings in the menu.'},
-      {id:'core25', tier:'super', ko:'파편 수집가', en:'Fragment Collector', dko:'미지의 파편과 25번 공명했다.', den:'You resonated with the unknown fragment 25 times.', hko:'가운데의 빛은 여러 번 손길을 기억합니다.', hen:'The light at the centre remembers many touches.'},
-      {id:'ad', tier:'super', ko:'광고 시청', en:'Ad Watcher', dko:'끝까지 광고를 시청했다.', den:'You watched an ad to the end.', hko:'메뉴에서 30초의 시간을 내어 보세요.', hen:'Spare thirty seconds from the menu.'},
-      {id:'name', tier:'mythic', ko:'이름이 있는 별', en:'A Star with a Name', dko:'자회에게 자신의 이름을 들려주었다.', den:'You told Jahoe your name.', hko:'처음 만남에서 당신을 소개하세요.', hen:'Introduce yourself at your first meeting.'},
-      {id:'languages', tier:'mythic', ko:'두 개의 언어', en:'Two Tongues', dko:'두 언어로 이 우주를 바라보았다.', den:'You viewed this universe in both languages.', hko:'타이틀 화면의 작은 전환 버튼을 기억하세요.', hen:'Remember the small switch on the title screen.', fixedKorean:false},
-      {id:'allbasic', tier:'legendary', ko:'기초는 단단하게', en:'Strong Foundations', dko:'기본 등급의 모든 기록을 모았다.', den:'You gathered every Basic record.', hko:'가장 가까운 기록부터 모두 모아 보세요.', hen:'Gather every nearby record.'},
-      {id:'allrare', tier:'legendary', ko:'별의 관측자', en:'Stargazer', dko:'희귀 등급의 모든 기록을 모았다.', den:'You gathered every Rare record.', hko:'희미한 색의 기록들을 모두 찾아보세요.', hen:'Find every pale-blue record.'},
-      {id:'subscriber', tier:'hidden', ko:'구독자', en:'Subscriber', dko:'출시일입니다. 그리고 저의 유튜브 영상을 보셨군요! 야!', den:'It is release day. And you watched my YouTube video! Hey!', hko:'출시일을 기억하시나요?', hen:'Do you remember the release date?'},
-      {id:'attendance10', tier:'unknown', ko:'10일의 행복', en:'Ten Days of Happiness', dko:'사라진 출석 기록 뒤에서 열 번째 행복을 발견했다.', den:'You found a tenth happiness behind the missing record.', hko:'매일매일 꾸준히...', hen:'Consistently every day...'},
-      {id:'sixseven', tier:'unknown', ko:'67', en:'67', dko:'six seven이 우주를 잠시 점령했다.', den:'Six seven briefly took over the universe.', hko:'두 개의 숫자가 우주를 흔듭니다.', hen:'Two numbers shake the universe.'},
-      {id:'terms',tier:'basic',ko:'약속의 시작',en:'First Promise',dko:'여행의 약속을 읽고 동의했다.',den:'You agreed to the journey’s promises.',hko:'시작 버튼을 눌러 약관에 동의하세요.',hen:'Start the game and agree to the terms.'},
-      {id:'robot',tier:'basic',ko:'사람입니다',en:'Definitely Human',dko:'3초의 로봇 인증을 끝냈다.',den:'You completed the three-second human check.',hko:'빛나는 원을 3초 동안 꾹 누르세요.',hen:'Hold the glowing circle for three seconds.'},
-      {id:'load',tier:'basic',ko:'기다림의 미학',en:'The Art of Waiting',dko:'가짜 로딩 우주를 통과했다.',den:'You passed through the fake loading universe.',hko:'시작 버튼을 눌러 보세요.',hen:'Press Start.'},
-      {id:'core1',tier:'basic',ko:'첫 공명',en:'First Resonance',dko:'미지의 파편이 처음 대답했다.',den:'The unknown fragment answered for the first time.',hko:'가운데 파편을 한 번 누르세요.',hen:'Tap the centre fragment once.'},
-      {id:'core7',tier:'rare',ko:'일곱 번째 파장',en:'Seventh Wave',dko:'일곱 번의 파편 공명을 들었다.',den:'You heard seven fragment resonances.',hko:'가운데 파편을 7번 누르세요.',hen:'Tap the centre fragment seven times.'},
-      {id:'core13',tier:'super',ko:'13번째 불길함',en:'Thirteenth Omen',dko:'열세 번째 공명이 이상하게 들렸다.',den:'The thirteenth resonance sounded strange.',hko:'가운데 파편을 13번 누르세요.',hen:'Tap the centre fragment thirteen times.'},
-      {id:'click33',tier:'rare',ko:'서른셋의 손길',en:'Thirty-Three Touches',dko:'우주에 33번 손을 댔다.',den:'You touched the universe thirty-three times.',hko:'게임 화면의 빈 곳을 계속 눌러 보세요.',hen:'Keep tapping empty space in the game.'},
-      {id:'menuopen',tier:'basic',ko:'문을 여는 사람',en:'Door Opener',dko:'우주 메뉴를 처음 열었다.',den:'You opened the universe menu.',hko:'오른쪽 위 메뉴를 누르세요.',hen:'Tap Menu in the upper right.'},
-      {id:'donateopen',tier:'rare',ko:'따뜻한 마음',en:'Warm Heart',dko:'후원 안내를 열어 보았다.',den:'You opened the donation information.',hko:'메뉴에서 후원하기를 누르세요.',hen:'Choose Donate in the menu.'},
-      {id:'codeopen',tier:'basic',ko:'암호의 문턱',en:'Code Threshold',dko:'가상 키보드 앞에 섰다.',den:'You stood before the virtual keyboard.',hko:'메뉴에서 코드 입력을 누르세요.',hen:'Choose Enter Code in the menu.'},
-      {id:'erasekey',tier:'basic',ko:'되돌리기',en:'Take It Back',dko:'가상 키보드의 지우기를 사용했다.',den:'You used Erase on the virtual keyboard.',hko:'코드에 글자 하나를 넣고 지우기를 누르세요.',hen:'Enter one code character, then press Erase.'},
-      {id:'filtertier',tier:'basic',ko:'정리의 달인',en:'Orderly Mind',dko:'도감에서 등급 필터를 사용했다.',den:'You used a tier filter in the collection.',hko:'도감 위의 등급 버튼을 누르세요.',hen:'Tap a tier button above the collection.'},
-      {id:'filterunknown',tier:'super',ko:'물음표 뒤편',en:'Behind the Question Mark',dko:'??? 등급의 기록만 바라보았다.',den:'You viewed only the ??? records.',hko:'도감에서 ??? 필터를 누르세요.',hen:'Use the ??? filter in the collection.'},
-      {id:'hint5',tier:'rare',ko:'다섯 개의 단서',en:'Five Clues',dko:'잠긴 기록의 단서를 다섯 번 읽었다.',den:'You read five locked-record clues.',hko:'미획득 기록을 5개 눌러 보세요.',hen:'Tap five locked records.'},
-      {id:'signal5',tier:'mythic',ko:'신호 다발',en:'Signal Bundle',dko:'다섯 번째 신호가 별무리가 되었다.',den:'The fifth signal became a cluster.',hko:'신호 탐색을 5번 누르세요.',hen:'Scan the signal five times.'},
-      {id:'day1',tier:'basic',ko:'첫 출석',en:'First Check-in',dko:'출석 여정의 첫날을 기록했다.',den:'You recorded day one of attendance.',hko:'출석체크 버튼을 누르세요.',hen:'Tap the Attendance button.'},
-      {id:'day5',tier:'rare',ko:'반짝이는 닷새',en:'Five Bright Days',dko:'출석 여정의 다섯째 날까지 왔다.',den:'You reached day five of attendance.',hko:'24시간 간격으로 출석을 5번 하세요.',hen:'Check in five times, 24 hours apart.'},
-      {id:'adopen',tier:'rare',ko:'광고의 문',en:'Ad Portal',dko:'가짜 광고의 문을 열었다.',den:'You opened the fake-ad portal.',hko:'메뉴에서 광고 시청을 누르세요.',hen:'Choose Watch an ad in the menu.'},
-      ...makeDiscoveries('star','rare',[['dawn','새벽별','Dawn Star'],['moon','달 조각','Moon Shard'],['blue','파란 안개','Blue Mist'],['nap','낮잠 별','Nap Star'],['glass','유리 혜성','Glass Comet'],['yellow','노란 신호','Yellow Signal'],['violet','보라 달','Violet Moon'],['thermo','체온계 행성','Thermometer Planet'],['door','가짜 문','False Door'],['shoot','쏘는 별','Shooting Star'],['snail','달팽이 성운','Snail Nebula'],['radio','저녁 라디오','Evening Radio'],['triangle','세모 우주','Triangle Universe'],['cup','끝없는 컵','Bottomless Cup'],['cat','우주 고양이','Space Cat']],'별자리'),
-      ...makeDiscoveries('toy','super',[['plane','종이비행기','Paper Plane'],['tea','별차 한 잔','Star Tea'],['dice','무중력 주사위','Zero-G Dice'],['plant','픽셀 화분','Pixel Plant'],['lamp','수면등 성운','Night-Lamp Nebula'],['fish','거꾸로 물고기','Upside-Down Fish'],['book','빈 페이지','Blank Page'],['tape','되감기 테이프','Rewind Tape'],['key','녹슨 열쇠','Rusty Key'],['cloud','주머니 구름','Pocket Cloud'],['bell','작은 종','Tiny Bell'],['sock','한 짝 양말','Single Sock'],['cookie','별가루 쿠키','Stardust Cookie'],['camera','즉석 카메라','Instant Camera'],['kite','우주 연','Space Kite'],['pencil','짧은 연필','Short Pencil'],['button','알 수 없는 버튼','Unknown Button'],['mirror','웃는 거울','Smiling Mirror']],'잡동사니'),
-      {id:'legend', tier:'legend', ko:'마지막 부탁', en:'The Final Request', dko:'자회의 모든 부탁을 들어주었다.', den:'You fulfilled every request from Jahoe.', hko:null, hen:null},
-    ];
-    const TOTAL = achievements.length;
-    const tierLabel = {ko:{basic:'기본',rare:'희귀',super:'레어',mythic:'신화',legendary:'전설',legend:'레전드',hidden:'히든',unknown:'???'},en:{basic:'Basic',rare:'Rare',super:'Super Rare',mythic:'Mythic',legendary:'Legendary',legend:'Legend',hidden:'Hidden',unknown:'???'}};
-    function t(key){ return texts[state.lang][key] ?? key; }
-    function cookie(name, value, days=365){ const expiry=new Date(Date.now()+days*864e5).toUTCString(); document.cookie=`${name}=${encodeURIComponent(value)}; expires=${expiry}; path=/; SameSite=Lax`; }
-    function readCookie(name){ const found=document.cookie.split('; ').find(x=>x.startsWith(name+'=')); return found?decodeURIComponent(found.slice(name.length+1)):null; }
-    function save(){ cookie('jahoe_progress_v1', JSON.stringify({lang:state.lang,name:state.name,unlocked:state.unlocked,clicks:state.clicks,coreClicks:state.coreClicks,collectionOpens:state.collectionOpens,signalScans:state.signalScans,menuOpens:state.menuOpens,hintReads:state.hintReads,attendanceDays:state.attendanceDays,lastAttendance:state.lastAttendance,attendanceReady:state.attendanceReady,languageSeen:state.languageSeen,settings:state.settings,started:state.started,voidStarted:state.voidStarted,freeMode:state.freeMode})); }
-    function load(){ try { const saved=JSON.parse(readCookie('jahoe_progress_v1')||'null'); if(saved){ state.lang=saved.lang||state.lang; state.name=saved.name||''; state.unlocked=Array.isArray(saved.unlocked)?saved.unlocked.filter(id=>getAch(id)):[]; state.clicks=Number(saved.clicks)||0; state.coreClicks=Number(saved.coreClicks)||0; state.collectionOpens=Number(saved.collectionOpens)||0; state.signalScans=Number(saved.signalScans)||0; state.menuOpens=Number(saved.menuOpens)||0; state.hintReads=Number(saved.hintReads)||0; state.attendanceDays=Number(saved.attendanceDays)||0; state.lastAttendance=Number(saved.lastAttendance)||0; state.attendanceReady=!!saved.attendanceReady||state.attendanceDays>=10; state.languageSeen=Array.isArray(saved.languageSeen)?saved.languageSeen:[]; state.settings={...state.settings,...saved.settings}; state.started=!!saved.started; state.voidStarted=!!saved.voidStarted; state.freeMode=!!saved.freeMode; } else { state.lang=(navigator.language||'ko').toLowerCase().startsWith('ko')?'ko':'en'; } } catch(e) { state.lang=(navigator.language||'ko').toLowerCase().startsWith('ko')?'ko':'en'; } if(!state.languageSeen.includes(state.lang)) state.languageSeen.push(state.lang); }
-    function icon(type='star'){ const icons={star:'<svg viewBox="0 0 24 24"><path d="m12 3 2.5 5.8L21 9.4l-5 4.3 1.5 6.3-5.5-3.3L6.5 20 8 13.7 3 9.4l6.5-.6z"/></svg>',lock:'<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg>',eye:'<svg viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>'}; return icons[type]||icons.star; }
-    function getAch(id){return achievements.find(a=>a.id===id);}
-    function titleOf(a){return a.fixedKorean?a.ko:(state.lang==='ko'?a.ko:a.en);} function descOf(a){return state.lang==='ko'?a.dko:a.den;} function hintOf(a){return state.lang==='ko'?a.hko:a.hen;}
-    function unlocked(id){return state.unlocked.includes(id);}
-    function updateUI(){ document.documentElement.lang=state.lang; document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n)); document.querySelectorAll('[data-i18n-html]').forEach(el=>el.innerHTML=t(el.dataset.i18nHtml)); $('#startBtn span').textContent=state.started?t('continue'):t('start'); $('#progressChip').innerHTML=`${t('unlocked')} <b>${state.unlocked.length}</b> ${t('of')} ${TOTAL}`; $('#titleProgress').textContent=`${state.unlocked.length} / ${TOTAL}`; $('#coreCount').textContent=`${Math.min(state.coreClicks,25)} / 25`; if(state.freeMode){document.querySelector('[data-i18n="mainTitle"]').textContent=t('voidTitle');document.querySelector('[data-i18n="mainIntro"]').textContent=t('voidIntro');} $('#statusBar').textContent=t('status'); renderAttendance(); }
-    function renderAttendance(){ const button=$('#attendanceBtn'); if(!button)return; const title=$('#attendanceTitle'),sub=$('#attendanceSub'); button.classList.toggle('attendance-ready',state.attendanceReady); if(state.attendanceReady){title.textContent=t('attendanceQuestion');sub.textContent='10일!';}else{title.textContent=t('attendance');sub.textContent=`${state.attendanceDays} / 10 · ${t('attendanceSub')}`;} }
-    function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const target=$('#'+id); target.classList.add('active'); }
-    function escapeHTML(v){ const div=document.createElement('div'); div.textContent=v; return div.innerHTML; }
-    function showModal(html, id='generic'){ state.activeModal=id; $('#modalContent').innerHTML=html; $('#modalLayer').classList.add('open'); }
-    function closeModal(){ $('#modalLayer').classList.remove('open'); state.activeModal=null; if(state.holdTimer){cancelAnimationFrame(state.holdTimer);state.holdTimer=null;} }
-    function toast(a){ const node=document.createElement('div'); node.className='toast'; node.innerHTML=`<div class="toast-icon ${a.tier}">${icon('star')}</div><div><div class="toast-kicker ${a.tier}">${tierLabel[state.lang][a.tier].toUpperCase()} · ${t('unlocked')}</div><div class="toast-title">${escapeHTML(titleOf(a))}</div><div class="toast-desc">${escapeHTML(descOf(a))}</div></div>`; $('#toastStack').append(node); setTimeout(()=>node.remove(),5100); }
-    function initAudio(){ if(!state.audioContext){ try { state.audioContext=new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} } if(state.audioContext?.state==='suspended') state.audioContext.resume(); }
-    function beep(special=false){ if(special && state.audioContext){ const c=state.audioContext, now=c.currentTime; [0, .13, .28].forEach((o,i)=>{const osc=c.createOscillator(),g=c.createGain(); osc.type=i===2?'sawtooth':'sine'; osc.frequency.setValueAtTime([262,392,659][i],now+o); osc.frequency.exponentialRampToValueAtTime([523,784,1318][i],now+o+.35); g.gain.setValueAtTime(.001,now+o); g.gain.exponentialRampToValueAtTime(.08,now+o+.03); g.gain.exponentialRampToValueAtTime(.001,now+o+.7); osc.connect(g).connect(c.destination);osc.start(now+o);osc.stop(now+o+.72);}); } else { const audio=new Audio(ACHIEVEMENT_SOUND); audio.volume=.54; audio.play().catch(()=>{}); } }
-    function startBgm(){ if(!state.audioContext || state.bgmTimer || !state.settings.bgm) return; const c=state.audioContext; const notes=[220,277.18,329.63,277.18,196,246.94,293.66,246.94]; let step=0; const pulse=()=>{ if(!state.settings.bgm||!state.audioContext)return; const now=c.currentTime; const o=c.createOscillator(),g=c.createGain(); o.type='sine';o.frequency.value=notes[step++%notes.length];g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.025,now+.12);g.gain.exponentialRampToValueAtTime(.0001,now+.85);o.connect(g).connect(c.destination);o.start(now);o.stop(now+.9);}; pulse();state.bgmTimer=setInterval(pulse,910); }
-    function stopBgm(){clearInterval(state.bgmTimer);state.bgmTimer=null;}
-    function unlock(id){ if(unlocked(id)) return false; const a=getAch(id); if(!a)return false; state.unlocked.push(id); save(); updateUI(); toast(a); const special=['legendary','legend','hidden','unknown'].includes(a.tier); beep(special); if(special) specialCutscene(a); setTimeout(checkMeta,50); return true; }
-    function specialCutscene(a){ cutQueue.push(a); playNextCutscene(); }
-    function playNextCutscene(){ if(cutscenePlaying||!cutQueue.length)return;cutscenePlaying=true;const a=cutQueue.shift(),isAttendance=a.id==='attendance10';$('#cutTier').textContent=isAttendance?'10일!':`${tierLabel[state.lang][a.tier].toUpperCase()} ACHIEVEMENT`;$('#cutTitle').textContent=titleOf(a);$('#cutDesc').textContent=descOf(a);$('#cutscene').classList.add('show');setTimeout(()=>{$('#cutscene').classList.remove('show');cutscenePlaying=false;playNextCutscene();},3000); }
-    function afterCutscenes(next){ if(cutscenePlaying||cutQueue.length){setTimeout(()=>afterCutscenes(next),160);return;}next(); }
-    function checkMeta(){ const basic=achievements.filter(a=>a.tier==='basic').every(a=>unlocked(a.id)); const rare=achievements.filter(a=>a.tier==='rare').every(a=>unlocked(a.id)); if(basic) unlock('allbasic'); if(rare) unlock('allrare'); const everythingBeforeLegend=achievements.filter(a=>a.id!=='legend').every(a=>unlocked(a.id)); if(everythingBeforeLegend) unlock('legend'); if(achievements.every(a=>unlocked(a.id))&&!state.voidStarted){state.voidStarted=true;save();setTimeout(()=>afterCutscenes(beginVoidStory),50);} }
-    function openTerms(){ showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><h2>${t('termsTitle')}</h2><p class="lead">${t('termsLead')}</p><div class="terms"><div class="term"><span class="term-no">01</span>${t('term1')}</div><div class="term"><span class="term-no">02</span>${t('term2')}</div><div class="term"><span class="term-no">03</span>${t('term3')}</div></div><div class="modal-actions"><button class="button primary" id="agreeBtn"><span>${t('agree')}</span></button></div>`,'terms'); $('#agreeBtn').onclick=()=>{unlock('terms');openVerify();}; }
-    function openVerify(){ showModal(`<div class="verification"><h2>${t('verifyTitle')}</h2><div class="verify-ring" id="verifyRing"><button class="hold-target" id="holdBtn">${t('verifyHold')}</button></div><p class="verify-note">${t('verifyNote')}</p></div>`,'verify'); bindHold(); }
-    function bindHold(){ const btn=$('#holdBtn'),ring=$('#verifyRing'); let start=0,frame; const reset=()=>{cancelAnimationFrame(frame);if(!btn.classList.contains('done')){btn.classList.remove('holding');ring.style.setProperty('--p',0);btn.textContent=t('verifyHold');}}; const tick=()=>{const pct=Math.min(100,(performance.now()-start)/3000*100);ring.style.setProperty('--p',pct);btn.textContent=pct>=100?t('verified'):t('verifying');if(pct>=100){btn.classList.remove('holding');btn.classList.add('done');unlock('robot');setTimeout(()=>{closeModal();beginStory();},500);return;}frame=requestAnimationFrame(tick);}; const begin=e=>{e.preventDefault();if(btn.classList.contains('done'))return;initAudio();start=performance.now();btn.classList.add('holding');tick();}; btn.addEventListener('pointerdown',begin); ['pointerup','pointerleave','pointercancel'].forEach(type=>btn.addEventListener(type,reset)); }
-    const storyKo=[['자회','여긴 어디지...'],['자회','넌 누구야?'],['__name__',''],['player','난 {name}이야'],['자회','날 도와줄래?'],['player','알았어..'],['자회','무서워 하지마 그냥 업적을 달성하면 돼'],['player','업적?'],['자회','응, 맞아. 아무튼 업적을 다 클리어해줘!'],['player','그게 뭔데??'],['자회','시간 없어 빨리!'],['player','뭐야 여긴 내가 왜 업적을 모아야 해...'],['player','그리고 난 나갈 수도 없네'],['player','그러고 보니 자회도 여기가 어딘지 모르던데 에라이 모르겠다']];
-    const storyEn=[['Jahoe','Where am I…?'],['Jahoe','Who are you?'],['__name__',''],['player','I’m {name}.'],['Jahoe','Will you help me?'],['player','Okay…'],['Jahoe','Don’t be scared. You only need to earn achievements.'],['player','Achievements?'],['Jahoe','Yes. Anyway, clear them all for me!'],['player','What even is that??'],['Jahoe','There’s no time. Hurry!'],['player','What is this place? Why do I have to collect achievements…'],['player','And I can’t even leave.'],['player','Jahoe doesn’t know where we are either… Whatever, I’ll try.']];
-    const voidKo=[['시스템','67개의 업적이 모두 사라졌습니다.'],['자회','뭐야… 진짜 다 모은 거야?'],['플레이어','그러니까 이제 나갈 수 있는 거지?'],['자회','그럴 줄 알았는데… 여긴 공허래.'],['시스템','막장입니다. 출구는 없고, 자유만 남았습니다.'],['자회','그래도 이제 마음대로 놀아. 이 우주는 네 거야.']];
-    const voidEn=[['SYSTEM','All 67 achievements have disappeared.'],['Jahoe','What… you really got them all?'],['player','So I can leave now, right?'],['Jahoe','I thought so too… but this is the Void.'],['SYSTEM','The plot has collapsed. There is no exit—only freedom.'],['Jahoe','Still, play however you like. This universe is yours now.']];
-    function beginStory(){ state.storyMode='opening';state.storyIndex=0;showScreen('storyScreen');renderStory(); }
-    function beginVoidStory(){ if(state.freeMode)return; state.storyMode='void';state.storyIndex=0;showScreen('storyScreen');renderStory(); }
-    function enterFreeMode(){ state.freeMode=true;save();showScreen('gameScreen');updateUI();toast({tier:'legend',ko:t('freeMode'),en:t('freeMode'),dko:t('voidIntro'),den:t('voidIntro')}); }
-    function renderStory(){ const lines=state.storyMode==='void'?(state.lang==='ko'?voidKo:voidEn):(state.lang==='ko'?storyKo:storyEn); const item=lines[state.storyIndex]; if(!item){if(state.storyMode==='void')enterFreeMode();else startGame();return;} if(item[0]==='__name__'){ openName();return;} const speaker=item[0]==='player'?(state.name||'Player'):item[0]; $('#storySpeaker').textContent=speaker;$('#storyLine').textContent=item[1].replace('{name}',state.name||'Player'); }
-    function advanceStory(){ if(!$('#storyScreen').classList.contains('active')||$('#modalLayer').classList.contains('open'))return; state.storyIndex++;renderStory(); }
-    function openName(){ showModal(`<div class="name-modal"><h2>${t('yourName')}</h2><p class="lead">${t('nameLead')}</p><input id="nameInput" maxlength="16" autocomplete="nickname" placeholder="${t('namePlaceholder')}" value="${escapeHTML(state.name)}"><p class="form-error" id="nameError" aria-live="polite"></p><div class="modal-actions" style="margin-top:8px"><button class="button primary" id="nameConfirm"><span>${t('nameConfirm')}</span></button></div></div>`,'name'); setTimeout(()=>$('#nameInput')?.focus(),150); const submit=()=>{const v=$('#nameInput').value.trim();if(!v||v.length>16){ $('#nameError').textContent=t('nameRequired');return;}state.name=v;save();closeModal();unlock('name'); setTimeout(()=>{state.storyIndex++;renderStory();},2000);};$('#nameConfirm').addEventListener('click',submit);$('#nameInput').addEventListener('input',()=>$('#nameError').textContent='');$('#nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')submit();}); }
-    function startGame(){ state.started=true;save();showScreen('gameScreen');initAudio();if(state.settings.bgm)startBgm();updateUI();unlock('start');setTimeout(()=>toast({tier:'basic',ko:t('beginTitle'),en:t('beginTitle'),dko:t('startAuto'),den:t('startAuto')}),500); }
-    function openCollection(){ state.collectionOpens++;save();unlock('collection'); const filters=['all','basic','rare','super','mythic','legendary','legend','hidden','unknown']; const render=()=>{const selection=state.filter; const cards=achievements.filter(a=>selection==='all'||a.tier===selection).map(a=>{const got=unlocked(a.id); return `<button class="card ${got?'':'locked'}" data-ach="${a.id}"><div class="ach-icon ${got?a.tier:''}">${got?icon('star'):icon('lock')}</div><div class="card-copy"><div class="tier ${got?a.tier:''}">${got?tierLabel[state.lang][a.tier]:t('locked')}</div><div class="card-title">${got?escapeHTML(titleOf(a)):'???'}</div><div class="card-desc">${got?escapeHTML(descOf(a)):t('hint')}</div></div></button>`;}).join(''); const filterButtons=filters.map(f=>`<button class="filter ${selection===f?'active':''}" data-filter="${f}">${f==='all'?t('all'):tierLabel[state.lang][f]}</button>`).join(''); showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><div class="collection-head"><h2>${t('collectionTitle')}</h2><div class="collection-count">${state.unlocked.length} ${t('of')} ${TOTAL}</div></div><div class="collection-filter">${filterButtons}</div><div class="ach-list">${cards}</div>`,'collection'); document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{state.filter=b.dataset.filter;if(b.dataset.filter!=='all')unlock('filtertier');if(b.dataset.filter==='unknown')unlock('filterunknown');render();});document.querySelectorAll('[data-ach]').forEach(b=>b.onclick=()=>openHint(b.dataset.ach));};render(); }
-    function openHint(id){ const a=getAch(id);if(!a)return; state.hintReads++;save();if(state.hintReads>=5)unlock('hint5'); const got=unlocked(id); if(!got)unlock('firsthint'); const noHint=['legend','hidden','unknown'].includes(a.tier);showModal(`<div class="hint-modal"><div class="hint-glyph">?</div><h2>${got?escapeHTML(titleOf(a)):'???'}</h2><p class="lead">${t('hint')}</p><p class="hint-text">${noHint?t('noHint'):(hintOf(a)||t('noHint'))}</p><button class="button" data-close>${t('close')}</button></div>`,'hint'); }
-    function openMenu(){ state.menuOpens++;save();unlock('menuopen');showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><h2>${t('menuTitle')}</h2><div class="menu-grid"><button class="menu-item" id="codeBtn"><b>${t('code')}</b><small>${t('codeSub')}</small></button><button class="menu-item" id="adBtn"><b>${t('ad')}</b><small>${t('adSub')}</small></button><button class="menu-item" id="donateBtn"><b>${t('donate')}</b><small>${t('donateSub')}</small></button></div><div class="setting-row"><div><b>${t('bgm')}</b><span>${t('bgmSub')}</span></div><button class="switch ${state.settings.bgm?'on':''}" id="bgmSwitch" aria-label="BGM toggle"><i></i></button></div>`,'menu');$('#codeBtn').onclick=openCode;$('#adBtn').onclick=()=>{unlock('adopen');startAd();};$('#donateBtn').onclick=openDonate;$('#bgmSwitch').onclick=()=>{state.settings.bgm=!state.settings.bgm;save();if(state.settings.bgm){initAudio();startBgm();}else stopBgm();openMenu();unlock('music');}; }
-    function openExplore(){
-      const render = (tab) => {
-        const items = achievements.filter(a => a.id.startsWith(tab + '-'));
-        const cards = items.map(a => {
-          const got = unlocked(a.id);
-          return `<button class="discover-card ${got?'found':''}" data-exp="${a.id}"><b>${got?escapeHTML(titleOf(a)):'???'}</b><small>${got?t('found'):t('notFound')}</small></button>`;
-        }).join('');
-        showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><h2>${t('explore')}</h2><p class="lead">${t('exploreSub')}</p><div class="discover-tabs"><button class="discover-tab ${tab==='star'?'active':''}" data-tab="star">${t('exploreTabs')[0]}</button><button class="discover-tab ${tab==='toy'?'active':''}" data-tab="toy">${t('exploreTabs')[1]}</button></div><div class="discover-grid">${cards}</div>`,'explore');
-        document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>render(b.dataset.tab));
-        document.querySelectorAll('[data-exp]').forEach(b=>b.onclick=()=>{
-          const id = b.dataset.exp;
-          if(!unlocked(id)){ unlock(id); render(tab); }
-        });
-      };
-      render('star');
-    }
-    function openCode(){ unlock('codeopen');let value='';const chars='1234567890abcdefghijklmnopqrstuvwxyz'.split('');const draw=()=>{showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><h2>${t('codeTitle')}</h2><p class="lead">${t('codeLead')}</p><div class="keypad-display">${value?escapeHTML(value):'—'}</div><div class="keypad">${chars.map(c=>`<button class="key" data-key="${c}">${c}</button>`).join('')}<button class="key wide" data-action="erase">${t('erase')}</button><button class="key wide confirm" data-action="confirm">${t('confirm')}</button></div>`,'code');document.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{if(value.length<20){value+=b.dataset.key;draw();}});document.querySelector('[data-action="erase"]').onclick=()=>{unlock('erasekey');value=value.slice(0,-1);draw();};document.querySelector('[data-action="confirm"]').onclick=()=>checkCode(value);};draw(); }
-    function startSixSeven(){ closeModal(); initAudio(); const overlay=$('#sixsevenOverlay'); overlay.innerHTML=''; for(let i=0;i<28;i++){const word=document.createElement('span');word.className='sixseven-word';word.textContent='67';word.style.setProperty('--x1',`${Math.round(Math.random()*92-46)}vw`);word.style.setProperty('--y1',`${Math.round(Math.random()*88-44)}vh`);word.style.setProperty('--x2',`${Math.round(Math.random()*92-46)}vw`);word.style.setProperty('--y2',`${Math.round(Math.random()*88-44)}vh`);word.style.setProperty('--time',`${1.4+Math.random()*1.8}s`);overlay.append(word);} overlay.classList.add('show'); if('speechSynthesis' in window){speechSynthesis.cancel();const voice=new SpeechSynthesisUtterance('six seven');voice.lang='en-US';voice.rate=.82;voice.pitch=.8;speechSynthesis.speak(voice);} setTimeout(()=>{overlay.classList.remove('show');overlay.innerHTML='';unlock('sixseven');},6000); }
-    function checkCode(value){ if(!value){ toast({tier:'basic',ko:t('codeEmpty'),en:t('codeEmpty'),dko:'',den:''});return;} if(value==='67'){startSixSeven();}else if(value==='20260912'){closeModal();unlock('subscriber');}else if(value.toLowerCase()==='admin123467'){closeModal();setTimeout(openAdmin,100);}else toast({tier:'basic',ko:t('codeWrong'),en:t('codeWrong'),dko:'',den:''}); }
-    function adminHintOf(a){ const special={subscriber:'코드 입력에서 20260912를 입력하세요.',attendance10:'출석체크를 24시간 간격으로 10번 완료한 뒤 물음표를 누르세요.',sixseven:'코드 입력에서 67을 입력하세요.',legend:'나머지 66개의 기록을 모두 모으세요.'};return special[a.id]||hintOf(a)||t('noHint'); }
-    function openAdmin(){ const rows=achievements.filter(a=>!unlocked(a.id)).map(a=>`<div class="admin-row"><b class="${a.tier}">${escapeHTML(titleOf(a))}</b> — ${escapeHTML(adminHintOf(a))}</div>`).join('')||`<div class="admin-row">${t('unlocked')}</div>`;showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><h2>${t('adminTitle')}</h2><p class="lead">${t('adminLead')}</p><div class="admin-list">${rows}</div>`,'admin'); }
-    function startAd(){ closeModal(); let left=30;$('#adClock').textContent=left;$('#adOverlay').classList.add('show');clearInterval(state.adTimer);state.adTimer=setInterval(()=>{left--;$('#adClock').textContent=left;if(left<=0){clearInterval(state.adTimer);$('#adOverlay').classList.remove('show');unlock('ad');toast({tier:'super',ko:t('adDone'),en:t('adDone'),dko:'',den:''});}},1000); }
-    function openDonate(){ unlock('donateopen'); showModal(`<button class="close" data-close aria-label="${t('close')}">×</button><h2>${t('donateTitle')}</h2><div class="donate-body" id="donateBody">${t('loading')}</div>`,'donate');fetch(DONATE_URL).then(r=>{if(!r.ok)throw new Error();return r.text();}).then(text=>{if($('#donateBody'))$('#donateBody').textContent=text;}).catch(()=>{if($('#donateBody'))$('#donateBody').textContent=t('fetchFail');}); }
-    function attend(){ const now=Date.now();if(state.attendanceReady){const a=getAch('attendance10');if(unlocked('attendance10'))specialCutscene(a);else unlock('attendance10');return;} const wait=86400000-(now-state.lastAttendance);if(state.lastAttendance&&wait>0){const hours=Math.ceil(wait/3600000);$('#statusBar').textContent=`${t('waitAttendance')} ${hours}h`;return;} state.attendanceDays=Math.min(10,state.attendanceDays+1);state.lastAttendance=now;if(state.attendanceDays>=1)unlock('day1');if(state.attendanceDays>=5)unlock('day5');if(state.attendanceDays>=10){state.attendanceReady=true;}save();updateUI();const message=state.lang==='ko'?`${state.attendanceDays}${t('checkedIn')}`:`Day ${state.attendanceDays} ${t('checkedIn')}`;toast({tier:'basic',ko:message,en:message,dko:'',den:''});$('#statusBar').textContent=state.attendanceReady?t('attendanceReady'):message; }
-    function fakeLoad(next){ $('#loadingOverlay').classList.add('show');setTimeout(()=>{$('#loadingOverlay').classList.remove('show');unlock('load');next();},850); }
-    function handleGlobalClick(){ const game=$('#gameScreen').classList.contains('active'); if(game && !$('#modalLayer').classList.contains('open') && !$('#adOverlay').classList.contains('show')&&!$('#sixsevenOverlay').classList.contains('show')){state.clicks++;save();if(state.clicks>=10)unlock('click10');if(state.clicks>=33)unlock('click33');} }
-    function setup(){ load();updateUI(); $('#startBtn').onclick=()=>{initAudio();fakeLoad(()=>{if(state.freeMode){startGame();}else if(state.voidStarted){beginVoidStory();}else if(state.started&&state.name){startGame();}else openTerms();});};$('#langBtn').onclick=()=>{state.lang=state.lang==='ko'?'en':'ko';if(!state.languageSeen.includes(state.lang))state.languageSeen.push(state.lang);save();updateUI();if(state.languageSeen.length===2)unlock('languages');};$('#menuBtn').onclick=openMenu;$('#menuQuickBtn').onclick=openMenu;$('#collectionBtn').onclick=openCollection;$('#exploreBtn').onclick=openExplore;$('#signalBtn').onclick=()=>{state.signalScans++;save();unlock('signal');if(state.signalScans>=5)unlock('signal5');$('#statusBar').textContent=t('signalMsg');};$('#coreBtn').onclick=()=>{state.coreClicks++;save();updateUI();if(state.coreClicks>=1)unlock('core1');if(state.coreClicks>=7)unlock('core7');if(state.coreClicks>=13)unlock('core13');if(state.coreClicks>=25)unlock('core25');};$('#attendanceBtn').onclick=attend;$('#modalLayer').onclick=e=>{if(e.target===$('#modalLayer'))closeModal();if(e.target.closest('[data-close]'))closeModal();};$('#adOverlay').onclick=()=>window.open(YOUTUBE_URL,'_blank','noopener');$('#storyAdvance').onclick=advanceStory; $('#storyAdvance').onkeydown=e=>{if(e.code==='Space'||e.key==='Enter'){e.preventDefault();advanceStory();}}; document.addEventListener('keydown',e=>{if(e.code==='Space'&&$('#storyScreen').classList.contains('active')&&!$('#modalLayer').classList.contains('open')){e.preventDefault();advanceStory();}});document.addEventListener('click',handleGlobalClick);window.addEventListener('beforeunload',save); }
-    setup();
-  })();
-  </script>
+    <!-- 커스텀 공지 모달 레이어 -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box" id="modalBox">
+            <div class="modal-badge" id="modalBadge" style="display: none;"></div>
+            <div class="modal-icon" id="modalIcon">📢</div>
+            <h3 class="modal-title" id="modalTitle">공지사항</h3>
+            <div class="modal-message" id="modalMessage"></div>
+            <button class="modal-btn" id="modalBtn" onclick="closeNoticeModal()">확인</button>
+        </div>
+    </div>
+
+    <script>
+        const REPO_OWNER = 'jihuluckyman';
+        const REPO_NAME = 'jahoe';
+        const FILE_PATH = 'assets/announcement.txt';
+
+        let previousText = ''; 
+        let isFirstCheck = true; // 최초 접속 시 자동 공지 팝업 방지용
+
+        const introOverlay = document.getElementById('introOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const loadingBarFill = document.getElementById('loadingBarFill');
+        const loadingText = document.getElementById('loadingText');
+
+        const customModal = document.getElementById('customModal');
+        const menuModal = document.getElementById('menuModal');
+        const modalBox = document.getElementById('modalBox');
+        const modalBadge = document.getElementById('modalBadge');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalBtn = document.getElementById('modalBtn');
+
+        const bgmAudio = document.getElementById('bgmAudio');
+        const bgmToggleBtn = document.getElementById('bgmToggleBtn');
+        let isBgmPlaying = false;
+
+        // '시작하기(START)' 버튼 클릭 시 실행되는 가짜 로딩 및 진입 함수
+        function handleGameStart() {
+            startBtn.style.display = 'none';
+            loadingContainer.style.display = 'flex';
+
+            let progress = 0;
+            const intervalTime = 15; // 로딩 속도 조절
+            const loadingInterval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 3; // 무작위로 빠르게 차오름
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    loadingText.innerText = `SYSTEM READY!`;
+                    loadingBarFill.style.width = `100%`;
+
+                    // 음악 재생 및 인트로 화면 페이드아웃
+                    setTimeout(() => {
+                        bgmAudio.play().then(() => {
+                            isBgmPlaying = true;
+                            bgmToggleBtn.innerText = '🔊 배경음악 끄기';
+                        }).catch(err => {
+                            console.log('오디오 재생 대기:', err);
+                        });
+
+                        introOverlay.classList.add('fade-out');
+                    }, 400);
+                } else {
+                    loadingBarFill.style.width = `${progress}%`;
+                    loadingText.innerText = `SYSTEM LOADING... ${progress}%`;
+                }
+            }, intervalTime);
+        }
+
+        // 배경음악 토글 함수
+        function toggleBgm() {
+            if (bgmAudio.paused) {
+                bgmAudio.play().then(() => {
+                    isBgmPlaying = true;
+                    bgmToggleBtn.innerText = '🔊 배경음악 끄기';
+                }).catch(err => {
+                    console.log('재생 실패:', err);
+                });
+            } else {
+                bgmAudio.pause();
+                isBgmPlaying = false;
+                bgmToggleBtn.innerText = '🔇 배경음악 켜기';
+            }
+        }
+
+        // 메뉴 모달 제어
+        function openMenuModal() { menuModal.classList.add('active'); }
+        function closeMenuModal() { menuModal.classList.remove('active'); }
+
+        // GitHub API 기반 실시간 공지 로드 (캐시 우회)
+        async function fetchRealtimeNoticeData() {
+            try {
+                const commitRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits/main`, {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' },
+                    cache: 'no-store'
+                });
+
+                let fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}`;
+
+                if (commitRes.ok) {
+                    const commitData = await commitRes.json();
+                    const latestHash = commitData.sha;
+                    fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${latestHash}/${FILE_PATH}`;
+                }
+
+                const response = await fetch(fileUrl, { cache: 'no-store' });
+                if (!response.ok) return null;
+
+                const textData = await response.text();
+                return { textData, jsonData: JSON.parse(textData) };
+            } catch (err) {
+                console.error('실시간 공지 불러오기 실패:', err);
+                return null;
+            }
+        }
+
+        // 백그라운드 자동 검사 (첫 진입 시에는 팝업을 띄우지 않음)
+        async function checkNoticeAuto() {
+            const res = await fetchRealtimeNoticeData();
+            if (!res) return;
+
+            const { textData, jsonData } = res;
+
+            if (jsonData.expireDate) {
+                const today = new Date().toISOString().split('T')[0];
+                if (today > jsonData.expireDate) return;
+            }
+
+            if (isFirstCheck) {
+                previousText = textData;
+                isFirstCheck = false;
+                return;
+            }
+
+            if (previousText !== textData) {
+                previousText = textData;
+                displayNoticeModal(jsonData);
+            }
+        }
+
+        // 수동 공지 호출 (로고/버튼)
+        async function fetchAndShowNotice() {
+            const res = await fetchRealtimeNoticeData();
+            if (res) {
+                const { textData, jsonData } = res;
+                if (jsonData.expireDate) {
+                    const today = new Date().toISOString().split('T')[0];
+                    if (today > jsonData.expireDate) {
+                        alert('등록된 공지사항이 만료되었습니다.');
+                        return;
+                    }
+                }
+                previousText = textData;
+                displayNoticeModal(jsonData);
+            } else {
+                alert('공지사항을 불러올 수 없습니다.');
+            }
+        }
+
+        // 공지 모달 창 렌더링
+        function displayNoticeModal(data) {
+            modalIcon.innerText = data.icon || '📢';
+            modalTitle.innerText = data.title || '공지사항';
+            modalMessage.innerHTML = data.content || '';
+            modalBtn.innerText = data.btnText || '확인';
+
+            if (data.badge) {
+                modalBadge.style.display = 'inline-block';
+                modalBadge.innerText = data.badge;
+                modalBadge.style.backgroundColor = (data.themeColor || '#38bdf8') + '25';
+                modalBadge.style.color = data.themeColor || '#38bdf8';
+                modalBadge.style.border = `1px solid ${data.themeColor || '#38bdf8'}60`;
+            } else {
+                modalBadge.style.display = 'none';
+            }
+
+            modalBox.style.backgroundColor = data.modalBgColor || '#1e293b';
+            modalBtn.style.backgroundColor = data.themeColor || '#38bdf8';
+
+            const themeColor = data.themeColor || '#38bdf8';
+            if (data.borderStyle === 'glow') {
+                modalBox.style.boxShadow = `0 25px 50px rgba(0,0,0,0.9), 0 0 30px ${themeColor}50`;
+                modalBox.style.border = `1px solid ${themeColor}80`;
+            } else if (data.borderStyle === 'gradient') {
+                modalBox.style.boxShadow = `0 25px 50px rgba(0,0,0,0.9)`;
+                modalBox.style.border = `2px solid ${themeColor}`;
+            } else {
+                modalBox.style.boxShadow = `0 25px 50px rgba(0,0,0,0.9)`;
+                modalBox.style.border = `1px solid rgba(255, 255, 255, 0.15)`;
+            }
+
+            if (data.iconAnim === 'bounce') {
+                modalIcon.style.animation = 'anim-bounce 1s infinite alternate';
+            } else if (data.iconAnim === 'pulse') {
+                modalIcon.style.animation = 'anim-pulse 1.5s infinite alternate';
+            } else {
+                modalIcon.style.animation = 'none';
+            }
+
+            modalBtn.onclick = function() {
+                closeNoticeModal();
+                if (data.btnLink) {
+                    window.open(data.btnLink, '_blank');
+                }
+            };
+
+            openNoticeModal();
+        }
+
+        function openNoticeModal() { customModal.classList.add('active'); }
+        function closeNoticeModal() { customModal.classList.remove('active'); }
+
+        customModal.addEventListener('click', (e) => { if (e.target === customModal) closeNoticeModal(); });
+        menuModal.addEventListener('click', (e) => { if (e.target === menuModal) closeMenuModal(); });
+
+        // 실시간 업데이트 감지 주기 가동 (3초마다 체크)
+        checkNoticeAuto();
+        setInterval(checkNoticeAuto, 3000);
+    </script>
 </body>
 </html>
