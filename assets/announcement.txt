@@ -1,14 +1,14 @@
 {
   "badge": "게임출시!",
-  "icon": "👾",
-  "title": "lol",
-  "content": "야\n이겜\n노잼",
+  "icon": "🎉",
+  "title": "이 게임 접읍시다.",
+  "content": "왜 할까요? 이겜!???",
   "themeColor": "#f83a3a",
   "modalBgColor": "#1e293b",
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
-  "btnLink": "youtube.com",
+  "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-16T12:06:00.186Z"
+  "updatedAt": "2026-09-16T12:08:23.912Z"
 }
