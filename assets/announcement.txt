@@ -2,13 +2,13 @@
   "badge": "중요 공지",
   "icon": "📢",
   "title": "[업데이트] 자회:이기다 v2.0 오픈 안내",
-  "content": "ㄴㄴㄴㄴㄴㄴㄴㄴ",
+  "content": "버그 쯪쯪 작작해라...",
   "themeColor": "#bdbdbd",
-  "modalBgColor": "#1a71ff",
+  "modalBgColor": "#243552",
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
   "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-16T12:52:55.502Z"
+  "updatedAt": "2026-09-16T12:59:52.522Z"
 }
