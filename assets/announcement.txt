@@ -8,7 +8,7 @@
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
-  "btnLink": "youtube.com/@자회자회",
+  "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-16T12:44:16.627Z"
+  "updatedAt": "2026-09-16T12:47:24.934Z"
 }
