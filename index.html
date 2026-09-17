@@ -40,39 +40,148 @@
         .section-title::before { content: ''; width: 5px; height: 20px; background: linear-gradient(to bottom, #38bdf8, #a855f7); border-radius: 3px; }
         .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
 
-        .game-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); border: 1px dashed rgba(255, 255, 255, 0.18); border-radius: 22px; padding: 1.6rem; height: 220px; display: flex; flex-direction: column; justify-content: space-between; opacity: 0.7; }
+        /* 활성화된 게임 카드 스타일 */
+        .game-card { 
+            background: rgba(30, 41, 59, 0.6); 
+            backdrop-filter: blur(16px); 
+            border: 1px solid rgba(56, 189, 248, 0.3); 
+            border-radius: 22px; 
+            padding: 1.5rem; 
+            min-height: 240px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            text-decoration: none; 
+            color: inherit; 
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .game-card:hover {
+            transform: translateY(-6px);
+            border-color: #38bdf8;
+            box-shadow: 0 12px 30px rgba(56, 189, 248, 0.25);
+            background: rgba(30, 41, 59, 0.8);
+        }
+        .game-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+        .game-card-icon { width: 54px; height: 54px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .game-card-title { font-size: 1.15rem; font-weight: 800; color: #f8fafc; }
+        .game-card-desc { font-size: 0.88rem; color: #94a3b8; line-height: 1.55; flex: 1; margin-bottom: 1rem; word-break: keep-all; }
+        .game-card-btn { 
+            background: linear-gradient(135deg, #f43f5e 0%, #ff2a5f 100%); 
+            color: #fff; text-align: center; padding: 0.65rem; 
+            border-radius: 12px; font-weight: 800; font-size: 0.88rem; 
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); 
+            transition: all 0.2s ease;
+        }
+        .game-card:hover .game-card-btn { filter: brightness(1.15); }
+
+        /* 준비 중 카드 스타일 */
+        .game-card.disabled { 
+            background: rgba(30, 41, 59, 0.4); 
+            border: 1px dashed rgba(255, 255, 255, 0.18); 
+            opacity: 0.6; 
+            height: 240px;
+            cursor: not-allowed;
+        }
+        .game-card.disabled:hover { transform: none; box-shadow: none; }
 
         footer { text-align: center; padding: 2.5rem 1rem; color: #64748b; font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(15, 23, 42, 0.6); }
 
-        /* 처음 접속 시 뜨는 간지나는 시작하기 화면 (인트로) */
+        /* ==================== 인트로 스크린 ==================== */
         #introOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+            background: radial-gradient(circle at center, #0d1527 0%, #030712 100%);
             z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+            overflow: hidden; transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s ease;
         }
-        #introOverlay.fade-out { opacity: 0; visibility: hidden; }
+        #introOverlay.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        .intro-content { text-align: center; display: flex; flex-direction: column; align-items: center; padding: 0 1.5rem; width: 100%; max-width: 400px; }
-        .intro-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 40px rgba(56, 189, 248, 0.4); margin-bottom: 1.5rem; animation: pulseGlow 2s infinite alternate; }
-        .intro-title { font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #38bdf8 0%, #c084fc 50%, #f43f5e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.3rem; }
-        .intro-subtitle { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 5px; color: #94a3b8; margin-bottom: 2.5rem; }
+        .scanlines {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 6px 100%; z-index: 1; pointer-events: none; opacity: 0.6;
+        }
+
+        #introCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+        .intro-card {
+            position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center;
+            padding: 3.2rem 2.8rem; width: 92%; max-width: 460px;
+            background: rgba(15, 23, 42, 0.75); border-radius: 30px;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.25), inset 0 0 35px rgba(168, 85, 247, 0.15);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            animation: introCardAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes introCardAppear { 0% { opacity: 0; transform: scale(0.8) translateY(30px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .hud-corner { position: absolute; width: 20px; height: 20px; border-color: #38bdf8; border-style: solid; pointer-events: none; }
+        .hud-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-top-left-radius: 8px; }
+        .hud-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-top-right-radius: 8px; }
+        .hud-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-bottom-left-radius: 8px; }
+        .hud-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-bottom-right-radius: 8px; }
+
+        .intro-logo-wrapper {
+            position: relative; width: 140px; height: 140px; margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .intro-ring { position: absolute; border-radius: 50%; border: 2px dashed rgba(56, 189, 248, 0.6); pointer-events: none; }
+        .ring-1 { width: 155px; height: 155px; animation: spinClockwise 10s linear infinite; border-top-color: #f43f5e; border-right-color: transparent; }
+        .ring-2 { width: 175px; height: 175px; animation: spinCounterClockwise 15s linear infinite; border-bottom-color: #c084fc; border-left-color: transparent; opacity: 0.8; }
+        .ring-3 { width: 195px; height: 195px; animation: spinClockwise 25s linear infinite; border: 1px dotted rgba(56, 189, 248, 0.3); }
+        
+        @keyframes spinClockwise { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spinCounterClockwise { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+
+        .intro-logo {
+            width: 115px; height: 115px; border-radius: 50%; object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.8), 0 0 20px rgba(244, 63, 94, 0.6);
+            animation: logoPulse 2.5s infinite alternate ease-in-out;
+        }
+        @keyframes logoPulse { 0% { transform: scale(0.95); box-shadow: 0 0 30px rgba(56, 189, 248, 0.6); } 100% { transform: scale(1.05); box-shadow: 0 0 50px rgba(56, 189, 248, 1), 0 0 25px rgba(192, 132, 252, 0.9); } }
+
+        .intro-title {
+            font-size: 3rem; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(135deg, #38bdf8 0%, #c084fc 45%, #f43f5e 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 5px 15px rgba(56, 189, 248, 0.4)); margin-bottom: 0.2rem;
+        }
+        .intro-subtitle {
+            font-family: 'Orbitron', sans-serif; font-size: 1.15rem; font-weight: 900;
+            letter-spacing: 8px; color: #94a3b8; text-shadow: 0 0 12px rgba(56, 189, 248, 0.5); margin-bottom: 2.2rem;
+        }
 
         .start-btn {
-            width: 100%; padding: 1.1rem; font-size: 1.1rem; font-weight: 800; color: #fff;
-            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%); border: none; border-radius: 16px;
-            cursor: pointer; box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4); transition: all 0.3s ease;
-            letter-spacing: 2px;
+            position: relative; width: 100%; padding: 1.25rem; font-size: 1.25rem; font-weight: 900;
+            font-family: 'Orbitron', sans-serif; letter-spacing: 4px; color: #fff;
+            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #f43f5e 100%);
+            background-size: 250% 250%; border: none; border-radius: 20px; cursor: pointer;
+            box-shadow: 0 10px 35px rgba(56, 189, 248, 0.5), 0 0 25px rgba(244, 63, 94, 0.3);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); animation: gradientShift 4s ease infinite; overflow: hidden;
         }
-        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(56, 189, 248, 0.6); filter: brightness(1.1); }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .start-btn:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 18px 45px rgba(56, 189, 248, 0.8), 0 0 35px rgba(244, 63, 94, 0.6);
+            filter: brightness(1.15);
+        }
+        .start-btn::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: rotate(30deg); transition: 0.8s; opacity: 0;
+        }
+        .start-btn:hover::after { opacity: 1; left: 100%; }
 
-        /* 가짜 로딩 바 컨테이너 */
-        .loading-container { width: 100%; margin-top: 1.5rem; display: none; flex-direction: column; align-items: center; gap: 0.6rem; }
-        .loading-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); }
-        .loading-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #c084fc); transition: width 0.1s linear; }
-        .loading-text { font-size: 0.85rem; color: #94a3b8; font-family: 'Orbitron', sans-serif; }
+        .loading-container { width: 100%; margin-top: 1.2rem; display: none; flex-direction: column; align-items: center; gap: 0.8rem; }
+        .loading-bar-bg { width: 100%; height: 12px; background: rgba(255, 255, 255, 0.08); border-radius: 8px; overflow: hidden; border: 1px solid rgba(56, 189, 248, 0.4); box-shadow: inset 0 0 8px rgba(0,0,0,0.6); }
+        .loading-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #38bdf8, #c084fc, #f43f5e); transition: width 0.1s linear; box-shadow: 0 0 12px #38bdf8; }
+        .loading-text { font-size: 0.88rem; color: #38bdf8; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-weight: 800; text-shadow: 0 0 8px rgba(56, 189, 248, 0.6); }
 
-        /* 모달 공통 스타일 (배경 블러 처리 포함) */
+        /* 모달 공통 스타일 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
@@ -101,21 +210,33 @@
 </head>
 <body>
 
-    <!-- 처음 접속 시 뜨는 간지나는 시작하기 화면 (인트로) -->
+    <!-- 인트로 화면 -->
     <div id="introOverlay">
-        <div class="intro-content">
-            <img src="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png" alt="Logo" class="intro-logo">
+        <div class="scanlines"></div>
+        <canvas id="introCanvas"></canvas>
+        <div class="intro-card">
+            <div class="hud-corner hud-tl"></div>
+            <div class="hud-corner hud-tr"></div>
+            <div class="hud-corner hud-bl"></div>
+            <div class="hud-corner hud-br"></div>
+
+            <div class="intro-logo-wrapper">
+                <div class="intro-ring ring-1"></div>
+                <div class="intro-ring ring-2"></div>
+                <div class="intro-ring ring-3"></div>
+                <img src="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png" alt="Logo" class="intro-logo">
+            </div>
             <h1 class="intro-title">자회:이기다</h1>
             <div class="intro-subtitle">JAHOE:WIN</div>
             
-            <button class="start-btn" id="startBtn" onclick="handleGameStart()">START</button>
+            <button class="start-btn" id="startBtn" onclick="handleGameStart()">START SYSTEM</button>
             
-            <!-- 가짜 로딩바 -->
+            <!-- SF 로딩 바 -->
             <div class="loading-container" id="loadingContainer">
                 <div class="loading-bar-bg">
                     <div class="loading-bar-fill" id="loadingBarFill"></div>
                 </div>
-                <div class="loading-text" id="loadingText">SYSTEM LOADING... 0%</div>
+                <div class="loading-text" id="loadingText">INITIALIZING SYSTEM... 0%</div>
             </div>
         </div>
     </div>
@@ -127,7 +248,6 @@
     <div class="bg-dim"></div>
 
     <header>
-        <!-- 상단 로고(합성기 모양 버튼): 클릭 시 공지 표시 -->
         <div class="logo-container" onclick="fetchAndShowNotice()">
             <div class="logo-glow"></div>
             <img src="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png" alt="Jahoe Logo" class="logo-img">
@@ -145,7 +265,36 @@
     <main>
         <div class="section-title">게임 로비</div>
         <div class="game-grid">
-            <div class="game-card"><p>🎮 신규 미니게임 준비 중입니다...</p></div>
+            
+            <!-- TAKE THE L 게임 카드 -->
+            <a href="https://jahoe.win/takeL" class="game-card">
+                <div class="game-card-header">
+                    <img src="https://github.com/jihuluckyman/jahoe/blob/main/takeL/icon.png?raw=true" alt="TAKE THE L Icon" class="game-card-icon">
+                    <div class="game-card-title">L을 가져가 (TAKE THE L)</div>
+                </div>
+                <div class="game-card-desc">
+                    감시자 L의 시야와 총알, 레이저 트랩을 피해서 L 코인을 훔치고 EXIT로 탈출하는 잠입 스릴러 게임!
+                </div>
+                <div class="game-card-btn">게임 시작하기</div>
+            </a>
+
+            <!-- VOID SURVIVOR 게임 카드 -->
+            <a href="https://jahoe.win/voidsurvival" class="game-card">
+                <div class="game-card-header">
+                    <img src="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/voidsurvivor/icon.png" alt="Void Survivor Icon" class="game-card-icon">
+                    <div class="game-card-title">보이드 서바이버 (Void Survivor)</div>
+                </div>
+                <div class="game-card-desc">
+                    당신은 얼만큼 오래 생존 가능하신가요? 능력을 레벨업하고 오래 살아남으세요! 서바이벌류 게임!
+                </div>
+                <div class="game-card-btn">게임 시작하기</div>
+            </a>
+
+            <!-- 준비 중 카드 -->
+            <div class="game-card disabled">
+                <p style="text-align: center; margin: auto; color: #94a3b8;">🎮 신규 미니게임 준비 중입니다...</p>
+            </div>
+
         </div>
     </main>
 
@@ -178,7 +327,6 @@
     </div>
 
     <script>
-        // 본인 리포지토리의 assets/announcement.txt 경로 설정 완료
         const NOTICE_URL = 'https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/announcement.txt';
 
         const introOverlay = document.getElementById('introOverlay');
@@ -200,6 +348,81 @@
         const bgmToggleBtn = document.getElementById('bgmToggleBtn');
         let isBgmPlaying = false;
 
+        /* ================= SF 사이버 그리드 & 파티클 3D 캔버스 엔진 ================= */
+        const canvas = document.getElementById('introCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let gridOffset = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class CyberParticle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.radius = Math.random() * 2.8 + 0.6;
+                this.color = ['#38bdf8', '#c084fc', '#f43f5e', '#6366f1'][Math.floor(Math.random() * 4)];
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.alpha = Math.random() * 0.8 + 0.2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) { this.reset(); }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 90; i++) { particles.push(new CyberParticle()); }
+
+        function drawCyberGrid() {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+            ctx.lineWidth = 1;
+            gridOffset = (gridOffset + 0.5) % 40;
+
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = gridOffset; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function animateCanvas() {
+            if (introOverlay.classList.contains('fade-out')) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawCyberGrid();
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        /* ================= 시작 동작 및 BGM 자동 실행 ================= */
         function handleGameStart() {
             startBtn.style.display = 'none';
             loadingContainer.style.display = 'flex';
@@ -207,11 +430,11 @@
             let progress = 0;
             const intervalTime = 15; 
             const loadingInterval = setInterval(() => {
-                progress += Math.floor(Math.random() * 8) + 3; 
+                progress += Math.floor(Math.random() * 6) + 2; 
                 if (progress >= 100) {
                     progress = 100;
                     clearInterval(loadingInterval);
-                    loadingText.innerText = `SYSTEM READY!`;
+                    loadingText.innerText = `SYSTEM ONLINE!`;
                     loadingBarFill.style.width = `100%`;
 
                     setTimeout(() => {
@@ -219,15 +442,21 @@
                             isBgmPlaying = true;
                             bgmToggleBtn.innerText = '🔊 배경음악 끄기';
                         }).catch(err => {
-                            console.log('오디오 재생 대기:', err);
+                            console.log('오디오 자동 재생 승인 대기:', err);
                         });
 
                         introOverlay.classList.add('fade-out');
                         loadAndShowNoticeOnRefresh();
-                    }, 400);
+                    }, 450);
                 } else {
                     loadingBarFill.style.width = `${progress}%`;
-                    loadingText.innerText = `SYSTEM LOADING... ${progress}%`;
+                    if (progress < 30) {
+                        loadingText.innerText = `CONNECTING NEURAL NET... ${progress}%`;
+                    } else if (progress < 70) {
+                        loadingText.innerText = `LOADING CORE ASSETS... ${progress}%`;
+                    } else {
+                        loadingText.innerText = `OPTIMIZING PLATFORM... ${progress}%`;
+                    }
                 }
             }, intervalTime);
         }
@@ -250,7 +479,6 @@
         function openMenuModal() { menuModal.classList.add('active'); }
         function closeMenuModal() { menuModal.classList.remove('active'); }
 
-        // 캐시 우회(Bypass Cache)를 위해 매 요청마다 타임스탬프(?t=시간값)를 붙여서 가져옵니다.
         async function fetchNoticeData() {
             try {
                 const timestamp = new Date().getTime();
