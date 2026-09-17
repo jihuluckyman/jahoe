@@ -1,14 +1,14 @@
 {
   "badge": "중요 공지",
   "icon": "📢",
-  "title": "[업데이트] 자회:이기다 v2.0 오픈 안내",
-  "content": "환영합니다!\n오늘은 공지 시스템이 완벽하게 만들어졌습니다.\n2026-09-16 10:13 PM",
-  "themeColor": "#bdbdbd",
-  "modalBgColor": "#243552",
+  "title": "엄청난 업데이트!",
+  "content": "안녕하세요. 개발팀입니다.\n새로운 미니게임 2종이 추가되었습니다!\n\n- 신규 게임: '숫자 맞추기', '카드 뒤집기'\n- 데이터 자동 백업 시스템 도입\n- UI 디자인 대규모 개편\n\n항상 이용해 주셔서 감사합니다!",
+  "themeColor": "#38bdf8",
+  "modalBgColor": "#1e293b",
   "borderStyle": "glow",
   "iconAnim": "pulse",
   "btnText": "확인했습니다",
   "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-16T13:13:29.833Z"
+  "updatedAt": "2026-09-17T12:46:43.799Z"
 }
