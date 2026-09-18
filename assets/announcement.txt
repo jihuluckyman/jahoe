@@ -1,14 +1,14 @@
 {
   "badge": "중요 공지",
-  "icon": "📢",
-  "title": "엄청난 업데이트!",
-  "content": "안녕하세요. 개발팀입니다.\n새로운 미니게임 2종이 추가되었습니다!\n\n- 신규 게임: '숫자 맞추기', '카드 뒤집기'\n- 데이터 자동 백업 시스템 도입\n- UI 디자인 대규모 개편\n\n항상 이용해 주셔서 감사합니다!",
+  "icon": "🚨",
+  "title": "긴급!",
+  "content": "안녕하세요 개발팀입니다.\n열심히 만들다 보니 버그가 많습니다. ㅠㅠ\n그러다보니 L을 가져가 게임이 변경 되었습니다 너그러운 이해를 부탁드립니다. -자회-",
   "themeColor": "#38bdf8",
   "modalBgColor": "#1e293b",
-  "borderStyle": "glow",
-  "iconAnim": "pulse",
-  "btnText": "확인했습니다",
+  "borderStyle": "gradient",
+  "iconAnim": "bounce",
+  "btnText": "닫기",
   "btnLink": "",
   "expireDate": "",
-  "updatedAt": "2026-09-17T12:46:43.799Z"
+  "updatedAt": "2026-09-18T11:12:50.543Z"
 }
