@@ -2,1428 +2,683 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>L을 가져가 (TAKE THE L)</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/jihuluckyman/jahoe/refs/heads/main/assets/image/icon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L을 가져가 (Take the L) - Vault Heist Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #07070a;
-            --panel-bg: rgba(18, 18, 26, 0.95);
-            --border: #232334;
-            --primary: #ff2a5f;
-            --gold: #ffb703;
-            --cyan: #00f0ff;
-            --green: #10b981;
-            --hard-red: #ef4444;
-            --purple: #a855f7;
-            --text-main: #f4f4f5;
-            --text-sub: #828292;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            touch-action: none;
-        }
-
         body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Pretendard', -apple-system, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Pretendard', sans-serif;
+            touch-action: manipulation;
+            background-color: #030712;
+            color: #f3f4f6;
         }
-
-        .game-frame {
-            width: 100%;
-            max-width: 440px;
-            height: 100%;
-            max-height: 840px;
-            background: #0b0b12;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            border: 1px solid var(--border);
-            box-shadow: 0 0 60px rgba(0,0,0,0.95);
-            overflow: hidden;
+        .font-cyber {
+            font-family: 'Orbitron', sans-serif;
         }
-
-        @media (min-width: 441px) {
-            .game-frame {
-                border-radius: 20px;
-                height: 95vh;
-            }
+        @keyframes laserMove {
+            0% { transform: translateY(-100%) rotate(45deg); opacity: 0.1; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(200%) rotate(45deg); opacity: 0.1; }
         }
-
-        /* 상단 UI */
-        .top-ui {
-            padding: 10px 12px;
-            background: var(--panel-bg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-            gap: 4px;
+        .laser-beam {
+            background: linear-gradient(to bottom, transparent, rgba(239, 68, 68, 0.8), transparent);
+            animation: laserMove 6s infinite linear;
         }
-
-        .stat-card {
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3), inset 0 0 15px rgba(239, 68, 68, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.7), inset 0 0 25px rgba(239, 68, 68, 0.4); }
         }
-
-        .stat-label {
-            color: var(--text-sub);
-            font-size: 9px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .stat-value {
-            font-size: 11px;
-            font-weight: 900;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .stat-value.cyan { color: var(--cyan); }
-        .stat-value.gold { color: var(--gold); }
-        .stat-value.red { color: var(--primary); }
-        .stat-value.green { color: var(--green); }
-        .stat-value.purple { color: var(--purple); }
-
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-lang {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border);
-            color: #fff;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 4px 6px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .badge-mode {
-            font-size: 9px;
-            font-weight: 900;
-            padding: 3px 6px;
-            border-radius: 5px;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-hard {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--hard-red);
-            color: var(--hard-red);
-            animation: pulseHard 1.2s infinite alternate;
-        }
-
-        .badge-boss {
-            background: rgba(168, 85, 247, 0.2);
-            border: 1px solid var(--purple);
-            color: var(--purple);
-            animation: pulseHard 0.8s infinite alternate;
-        }
-
-        @keyframes pulseHard {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; box-shadow: 0 0 10px currentColor; }
-        }
-
-        /* 뷰포트 & 캔버스 */
-        .viewport {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: #050508;
-            overflow: hidden;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        /* 조이스틱 및 은신 버튼 */
-        .touch-ui {
-            position: absolute;
-            bottom: 14px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 18px;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .joystick-base {
-            width: 86px;
-            height: 86px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            position: relative;
-            pointer-events: auto;
-        }
-
-        .joystick-thumb {
-            width: 34px;
-            height: 34px;
-            background: var(--cyan);
-            border-radius: 50%;
-            position: absolute;
-            top: 24px;
-            left: 24px;
-            box-shadow: 0 0 10px var(--cyan);
-        }
-
-        .btn-stealth {
-            width: 58px;
-            height: 58px;
-            background: rgba(255, 42, 95, 0.2);
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 900;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: auto;
-            cursor: pointer;
-            box-shadow: 0 0 12px rgba(255, 42, 95, 0.3);
-        }
-
-        .btn-stealth:active {
-            transform: scale(0.92);
-            background: var(--primary);
-        }
-
-        /* 팝업 오버레이 */
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(7, 7, 10, 0.95);
-            backdrop-filter: blur(12px);
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px 18px;
-            overflow-y: auto;
-        }
-
-        .overlay-header h1 {
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            text-align: center;
-        }
-
-        .overlay-header h1 span { color: var(--gold); }
-        .overlay-header h1 .danger { color: var(--hard-red); }
-        .overlay-header h1 .purple { color: var(--purple); }
-
-        .overlay-header p {
-            font-size: 11px;
-            color: var(--text-sub);
-            text-align: center;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
-        .tutorial-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin: 8px 0;
-            font-size: 11px;
-            line-height: 1.4;
-            color: #d1d1d6;
-        }
-
-        .tutorial-title {
-            font-weight: 900;
-            color: var(--cyan);
-            margin-bottom: 4px;
-            font-size: 12px;
-        }
-
-        .tutorial-item {
-            margin-bottom: 4px;
-            padding-left: 6px;
-            border-left: 2px solid var(--primary);
-        }
-
-        /* 상점 리스트 */
-        .shop-container {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .shop-row {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .shop-text { text-align: left; }
-        .shop-title { font-size: 12px; font-weight: 800; color: #fff; }
-        .shop-sub { font-size: 9px; color: var(--text-sub); margin-top: 2px; }
-
-        .btn-buy {
-            background: var(--gold);
-            color: #000;
-            border: none;
-            padding: 6px 10px;
-            font-size: 10px;
-            font-weight: 900;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-buy.awaken {
-            background: var(--purple);
-            color: #fff;
-            box-shadow: 0 0 8px var(--purple);
-        }
-
-        .btn-buy:disabled {
-            background: #22222e;
-            color: #555;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .btn-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .btn-main {
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 900;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 8px 16px rgba(255, 42, 95, 0.3);
-        }
-
-        .btn-reset {
-            background: transparent;
-            color: var(--text-sub);
-            border: none;
-            font-size: 10px;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        /* 속도 각성 커스텀 모달 */
-        .modal {
-            position: absolute;
-            inset: 0;
-            background: rgba(5, 5, 8, 0.96);
+        .vault-panel {
+            background: rgba(10, 15, 30, 0.85);
             backdrop-filter: blur(16px);
-            z-index: 30;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            text-align: center;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: pulseGlow 4s infinite ease-in-out;
         }
-
-        .modal h2 {
-            font-size: 20px;
-            font-weight: 900;
-            color: var(--purple);
-            margin-bottom: 8px;
+        @keyframes hackScan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-
-        .modal p {
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-bottom: 20px;
+        .cyber-button {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .speed-slider-container {
-            width: 100%;
-            max-width: 280px;
-            margin-bottom: 24px;
+        .cyber-button:hover {
+            border-color: rgba(239, 68, 68, 1);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            transform: translateY(-2px);
         }
-
-        .speed-slider {
-            width: 100%;
-            accent-color: var(--purple);
-            height: 6px;
-        }
-
-        .speed-val-display {
-            font-size: 18px;
-            font-weight: 900;
-            color: #fff;
-            margin-top: 8px;
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 overflow-x-hidden relative selection:bg-rose-600 selection:text-white">
 
-    <div class="game-frame">
-        <!-- 상단 헤더 UI -->
-        <header class="top-ui">
-            <div class="stat-card">
-                <span class="stat-label" id="lbl-floor">단계</span>
-                <span class="stat-value cyan" id="ui-floor">FLOOR 1</span>
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
+        <div class="absolute -inset-[50%] opacity-20 bg-[radial-gradient(#ef4444_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        <div class="absolute top-0 left-1/4 w-1 h-[200vh] laser-beam"></div>
+        <div class="absolute top-0 left-3/4 w-1 h-[200vh] laser-beam" style="animation-delay: -3s;"></div>
+    </div>
+
+    <header class="w-full max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between pb-4 border-b border-rose-950/60 gap-4 relative z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-600 via-rose-800 to-slate-900 flex items-center justify-center font-black text-2xl font-cyber text-rose-100 shadow-[0_0_20px_rgba(239,68,68,0.5)] border border-rose-500/50">
+                L
             </div>
-            <div class="stat-card">
-                <span class="stat-label" id="lbl-coins">보유 코인</span>
-                <span class="stat-value gold" id="ui-coin">0 C</span>
+            <div>
+                <h1 class="text-2xl font-black tracking-widest font-cyber bg-gradient-to-r from-rose-500 via-amber-200 to-rose-300 bg-clip-text text-transparent">
+                    L을 가져가
+                </h1>
+                <p class="text-xs text-rose-400/80 font-mono tracking-wider">VAULT_HEIST_PROTOCOL // SECURE_NODE</p>
             </div>
-            <div class="stat-card">
-                <span class="stat-label" id="lbl-bag">소지 가방</span>
-                <span class="stat-value red" id="ui-bag">0 / 2</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openRulesModal()" class="px-4 py-2 bg-slate-900/90 hover:bg-rose-950/40 text-rose-300 font-semibold text-xs font-cyber rounded-xl border border-rose-500/40 transition-all flex items-center gap-2 shadow-lg shadow-rose-950/30 active:scale-95">
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                보안 가이드
+            </button>
+            <button onclick="toggleBGM()" id="bgmToggleBtn" class="px-4 py-2 bg-slate-900/90 hover:bg-rose-950/40 text-emerald-400 font-semibold text-xs font-cyber rounded-xl border border-emerald-500/40 transition-all flex items-center gap-2 shadow-lg active:scale-95">
+                <span id="bgmIndicator" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="bgmText">BGM ON</span>
+            </button>
+            <button onclick="toggleAudio()" id="soundToggleBtn" class="p-2.5 bg-slate-900/90 hover:bg-rose-950/40 text-slate-300 rounded-xl border border-rose-500/40 transition-all active:scale-95">
+                <svg id="soundIcon" class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl mx-auto my-auto flex flex-col items-center justify-center py-6 gap-6 relative z-10">
+        
+        <!-- Setup Screen (Prison Vault Terminal) -->
+        <div id="setupScreen" class="w-full max-w-md vault-panel p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col gap-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent"></div>
+            
+            <div class="text-center">
+                <h2 class="text-xl font-bold font-cyber text-slate-100 tracking-wide">보안 금고 침투 설정</h2>
+                <p class="text-xs text-rose-400/80 font-mono mt-1">CHOOSE YOUR HEIST PARAMETERS</p>
             </div>
-            <div class="stat-card">
-                <span class="stat-label" id="lbl-goal">목표 L 반납</span>
-                <span class="stat-value green" id="ui-goal">0 / 3</span>
+
+            <!-- Mode Selector -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="setGameMode('ai')" id="modeAiBtn" class="p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 bg-rose-600/20 border-rose-500 text-rose-200 font-semibold shadow-inner">
+                    <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    <span class="font-cyber text-xs">SOLO (vs AI)</span>
+                </button>
+                <button onclick="setGameMode('pvp')" id="modePvpBtn" class="p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 bg-slate-900/60 border-rose-950 text-slate-400 font-semibold hover:border-rose-800">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span class="font-cyber text-xs">DUO (2인용)</span>
+                </button>
             </div>
 
-            <div class="header-controls">
-                <div id="ui-mode-badge" style="display:none;" class="badge-mode badge-hard">HARD</div>
-                <button class="btn-lang" id="btn-lang" onclick="toggleLanguage()">KR | EN</button>
-            </div>
-        </header>
-
-        <!-- 캔버스 게임 화면 -->
-        <div class="viewport" id="viewport">
-            <canvas id="gameCanvas"></canvas>
-
-            <!-- 터치 조이스틱 & 은신 -->
-            <div class="touch-ui">
-                <div class="joystick-base" id="joy-base">
-                    <div class="joystick-thumb" id="joy-thumb"></div>
-                </div>
-                <div class="btn-stealth" id="btn-stealth">은신</div>
-            </div>
-
-            <!-- 메인 메뉴 및 상점 팝업 -->
-            <div class="overlay" id="overlay">
-                <div class="overlay-header">
-                    <h1 id="ov-title">L을 <span>가져가</span></h1>
-                    <p id="ov-desc">스마일 L을 훔쳐 탈출구에 반납하고 탈출하세요!</p>
-                </div>
-
-                <!-- 튜토리얼 가이드 -->
-                <div class="tutorial-box">
-                    <div class="tutorial-title" id="tut-title">📖 게임 방법 & Rule</div>
-                    <div class="tutorial-item" id="tut-rule-1">
-                        1. 각 층마다 지정된 <strong>[목표 L]</strong>만큼 코인을 수집해 탈출구(EXIT)에 반납(Bank)해야 탈출구가 활성화됩니다.
-                    </div>
-                    <div class="tutorial-item" id="tut-rule-2">
-                        2. 소지 한도는 <strong>가방 용량</strong>으로 제한됩니다. 가방이 차면 탈출구로 돌아와 즉시 반납하세요!
-                    </div>
-                    <div class="tutorial-item" id="tut-rule-3">
-                        3. 감시자 L의 광원 시야, 원거리 총알, 레이저 트랩을 피하세요.
-                    </div>
-                    <div class="tutorial-item" id="tut-rule-4">
-                        4. <strong>67층부터 HARD 모드</strong>, <strong>134층은 최종 보스전</strong>입니다.
-                    </div>
-                </div>
-
-                <!-- 능률 업그레이드 상점 -->
-                <div class="shop-container">
-                    <div class="shop-row">
-                        <div class="shop-text">
-                            <div class="shop-title" id="sh-spd-title">이동 속도 증가</div>
-                            <div class="shop-sub" id="sub-speed">Lv.1</div>
-                        </div>
-                        <button class="btn-buy" id="btn-buy-speed" onclick="buyUpgrade('speed')">100 C</button>
-                    </div>
-                    <div class="shop-row">
-                        <div class="shop-text">
-                            <div class="shop-title" id="sh-bag-title">가방 용량 확장</div>
-                            <div class="shop-sub" id="sub-bag">Lv.1</div>
-                        </div>
-                        <button class="btn-buy" id="btn-buy-bag" onclick="buyUpgrade('bag')">150 C</button>
-                    </div>
-                    <div class="shop-row">
-                        <div class="shop-text">
-                            <div class="shop-title" id="sh-stl-title">은신 지속시간</div>
-                            <div class="shop-sub" id="sub-stealth">Lv.1</div>
-                        </div>
-                        <button class="btn-buy" id="btn-buy-stealth" onclick="buyUpgrade('stealth')">200 C</button>
-                    </div>
-                </div>
-
-                <div class="btn-actions">
-                    <button class="btn-main" id="btn-start" onclick="startFloor()">잠입 개시</button>
-                    <button class="btn-reset" id="btn-reset" onclick="resetSaveData()">데이터 초기화 (Reset Progress)</button>
+            <!-- AI Difficulty -->
+            <div id="aiDifficultyContainer" class="flex flex-col gap-2">
+                <label class="text-xs font-mono font-semibold text-rose-300/80">AI SECURITY LEVEL</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setDifficulty('easy')" id="diffEasyBtn" class="py-2.5 px-4 rounded-xl border border-rose-950 bg-slate-900/80 text-slate-300 text-xs font-cyber transition-all">ROOKIE (랜덤)</button>
+                    <button onclick="setDifficulty('smart')" id="diffSmartBtn" class="py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-600/20 text-rose-200 text-xs font-cyber transition-all shadow-[0_0_10px_rgba(239,68,68,0.3)]">MASTER (필승법)</button>
                 </div>
             </div>
 
-            <!-- 스피드 각성 커스텀 모달 -->
-            <div class="modal" id="modal-speed-custom">
-                <h2 id="modal-spd-title">⚡ 스피드 각성 커스텀</h2>
-                <p id="modal-spd-desc">1레벨부터 30레벨까지 이동 속도를 자유롭게 조절하세요.</p>
-                <div class="speed-slider-container">
-                    <input type="range" min="1" max="30" value="30" class="speed-slider" id="speed-range" oninput="onSpeedSliderChange(this.value)">
-                    <div class="speed-val-display" id="speed-val-text">SPEED: Lv.30</div>
+            <!-- First Player Selector -->
+            <div class="flex flex-col gap-2">
+                <label class="text-xs font-mono font-semibold text-rose-300/80">INFILTRATION ORDER (선공)</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setFirstPlayer('player')" id="firstPlayerBtn" class="py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-600/20 text-rose-200 text-xs font-cyber transition-all">PLAYER 1</button>
+                    <button onclick="setFirstPlayer('second')" id="secondPlayerBtn" class="py-2.5 px-4 rounded-xl border border-rose-950 bg-slate-900/80 text-slate-300 text-xs font-cyber transition-all">AI / PLAYER 2</button>
                 </div>
-                <button class="btn-main" style="background: var(--purple);" onclick="closeSpeedModal()">설정 완료</button>
+            </div>
+
+            <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-rose-600 via-rose-700 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black font-cyber rounded-2xl shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-all active:scale-[0.98] mt-2 border border-rose-400/50">
+                금고 해킹 시작 [EXECUTE]
+            </button>
+        </div>
+
+        <!-- In-Game Screen -->
+        <div id="gameScreen" class="w-full hidden flex-col gap-6 items-center">
+            
+            <!-- Vault Status Bar -->
+            <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="vault-panel p-4 rounded-2xl flex items-center justify-between sm:justify-center gap-4">
+                    <span class="text-xs font-mono text-rose-300/80">현재 턴 (OPERATOR)</span>
+                    <span id="currentTurnBadge" class="px-3 py-1 bg-rose-600/20 text-rose-400 text-xs font-cyber font-bold rounded-xl border border-rose-500/40 animate-pulse">PLAYER 1</span>
+                </div>
+                <div class="vault-panel p-4 rounded-2xl flex items-center justify-between sm:justify-center gap-4">
+                    <span class="text-xs font-mono text-rose-300/80">보안 코드 잔량</span>
+                    <span id="remainingCountBadge" class="text-amber-400 font-mono font-bold text-sm">12 / 12 NODES</span>
+                </div>
+                <div class="vault-panel p-4 rounded-2xl flex items-center justify-between sm:justify-center gap-4">
+                    <span class="text-xs font-mono text-rose-300/80">선택한 데이터</span>
+                    <span id="selectedCountBadge" class="text-indigo-400 font-mono font-bold text-sm">0 NODES</span>
+                </div>
+            </div>
+
+            <!-- Main Interactive Letter Board Container -->
+            <div class="w-full vault-panel p-6 sm:p-10 rounded-3xl shadow-2xl flex flex-col items-center gap-8 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <!-- Instruction banner -->
+                <div class="text-center">
+                    <h3 id="instructionText" class="text-lg sm:text-xl font-bold font-cyber text-slate-100">연속된 데이터 노드를 1개 이상, 최대 3개까지 해킹하세요</h3>
+                    <p class="text-xs text-rose-400 mt-1 font-mono font-semibold tracking-wide">🚨 경고: 마지막 금고 노드 'L'을 해킹하는 오퍼레이터가 패배합니다!</p>
+                </div>
+
+                <!-- Letter Chips Grid (Laser Vault Aesthetic) -->
+                <div id="letterBoard" class="flex flex-wrap justify-center gap-3 sm:gap-4 max-w-2xl py-4">
+                    <!-- Dynamic Letters Rendered via JS -->
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex items-center gap-3 w-full max-w-sm justify-center pt-2">
+                    <button onclick="clearSelection()" class="px-5 py-3.5 bg-slate-900 hover:bg-rose-950/50 text-slate-300 font-bold text-xs font-cyber rounded-2xl border border-rose-950 transition-all active:scale-95 shadow-lg">
+                        초기화 [RESET]
+                    </button>
+                    <button id="confirmBtn" onclick="confirmSelection()" disabled class="flex-1 py-3.5 bg-gradient-to-r from-rose-600 to-amber-600 opacity-50 cursor-not-allowed text-white font-bold text-xs font-cyber rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all active:scale-95 border border-rose-400/50">
+                        데이터 탈취 [EXTRACT]
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scoreboard Footer -->
+            <div class="w-full flex justify-between items-center px-2">
+                <div class="text-xs font-mono text-rose-300/70 flex items-center gap-2">
+                    <span>HEIST RECORD:</span>
+                    <span id="scoreDisplay" class="font-bold font-cyber text-slate-200">0승 0패</span>
+                </div>
+                <button onclick="returnToSetup()" class="text-xs font-mono text-rose-400 hover:text-rose-200 underline transition-colors">
+                    설정으로 돌아가기 [ABORT]
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rules Modal -->
+    <div id="rulesModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="vault-panel rounded-3xl max-w-lg w-full p-6 sm:p-8 flex flex-col gap-6 shadow-2xl relative">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold font-cyber text-slate-100 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    보안 금고 해킹 가이드
+                </h3>
+                <button onclick="closeRulesModal()" class="text-slate-400 hover:text-white p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-4 text-sm text-slate-300 leading-relaxed max-h-[60vh] overflow-y-auto pr-2 font-mono">
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-rose-950">
+                    <h4 class="font-bold text-rose-400 mb-1 font-cyber">🎯 미션 목표</h4>
+                    <p>A부터 L까지 일렬로 나열된 보안 노드를 해킹합니다. 마지막 노드인 <strong>'L'</strong>을 해킹(가져가)하게 되는 오퍼레이터가 보안 경보에 걸려 패배합니다!</p>
+                </div>
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-rose-950">
+                    <h4 class="font-bold text-amber-400 mb-1 font-cyber">🕹️ 해킹 규칙</h4>
+                    <p>자신의 턴에 남아있는 노드 중 <strong>연속된 노드를 1개부터 최대 3개까지</strong> 선택하여 추출할 수 있습니다.</p>
+                </div>
+                <div class="bg-slate-900/80 p-4 rounded-2xl border border-rose-950">
+                    <h4 class="font-bold text-indigo-400 mb-1 font-cyber">💡 마스터 전략 (Optimal Play)</h4>
+                    <p>상대방에게 항상 뒤에서 4번째 노드인 <strong>'I'</strong>를 떠넘기는 것이 필승 공식입니다. 내가 'I'를 남기고 턴을 넘기면 상대방이 몇 개를 가져가든 'L'을 피할 수 있습니다!</p>
+                </div>
+            </div>
+
+            <button onclick="closeRulesModal()" class="w-full py-3.5 bg-slate-900 hover:bg-rose-950/60 text-white font-bold font-cyber rounded-2xl transition-all border border-rose-500/40">
+                가이드 확인완료 [CLOSE]
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="vault-panel rounded-3xl max-w-md w-full p-6 sm:p-8 flex flex-col items-center text-center gap-6 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-600 via-amber-500 to-rose-600"></div>
+            <div id="gameOverIcon" class="w-20 h-20 rounded-3xl bg-rose-600/20 text-rose-500 flex items-center justify-center text-4xl shadow-[0_0_30px_rgba(239,68,68,0.5)] border border-rose-500/50">
+                🚨
+            </div>
+            <div>
+                <h3 id="gameOverTitle" class="text-2xl font-black font-cyber text-slate-100">보안 경보 발령!</h3>
+                <p id="gameOverDesc" class="text-sm font-mono text-rose-300/80 mt-2">마지막 'L' 노드를 해킹하여 검거되었습니다.</p>
+            </div>
+            <div class="flex items-center gap-3 w-full pt-2">
+                <button onclick="returnToSetup()" class="flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold font-cyber rounded-2xl transition-all border border-rose-950">
+                    메인 메뉴 [MENU]
+                </button>
+                <button onclick="restartGame()" class="flex-1 py-3.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold font-cyber rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all border border-rose-400/50">
+                    재도전 [RETRY]
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        /* --- 다국어 (i18n) 데이터 --- */
-        const i18n = {
-            kr: {
-                title: "L을 <span>가져가</span>",
-                desc: "스마일 L을 훔쳐 탈출구에 반납하고 탈출하세요!",
-                lblFloor: "단계",
-                lblCoins: "보유 코인",
-                lblBag: "소지 가방",
-                lblGoal: "목표 L 반납",
-                tutTitle: "📖 게임 방법 & Rule",
-                tut1: "1. 각 층마다 지정된 <strong>[목표 L]</strong>만큼 코인을 수집해 탈출구(EXIT)에 반납(Bank)해야 탈출구가 활성화됩니다.",
-                tut2: "2. 소지 한도는 <strong>가방 용량</strong>으로 제한됩니다. 가방이 차면 탈출구로 돌아와 즉시 반납하세요!",
-                tut3: "3. 감시자 L의 광원 시야, 원거리 총알, 레이저 트랩을 피하세요.",
-                tut4: "4. <strong>67층부터 HARD 모드</strong>, <strong>134층은 최종 보스전</strong>입니다.",
-                shSpd: "이동 속도 증가",
-                shBag: "가방 용량 확장",
-                shStl: "은신 지속시간",
-                btnStart: "잠입 개시",
-                btnNext: "다음 층 진입",
-                btnRetry: "다시 시도",
-                btnReset: "데이터 초기화 (Reset)",
-                stealthBtn: "은신",
-                caughtMsg: "감시자 L에게 발각되었습니다!",
-                bulletMsg: "감시자의 총알에 맞았습니다!",
-                laserMsg: "보안 레이저에 걸렸습니다!",
-                successTitle: "탈출 <span>성공!</span>",
-                hardAlert: "67층 <span class='danger'>HARD MODE</span> 진입!",
-                hardDesc: "67층 진입! 적들의 총알 발사 빈도와 이동 속도가 극도로 증가합니다.",
-                bossAlert: "134층 <span class='purple'>FINAL BOSS</span>",
-                bossDesc: "최종 보스 L 등장! 거대한 시야각과 탄막 폭격을 피하고 25개의 L 코인을 반납하여 탈출하세요!",
-                bossClearTitle: "🎉 <span class='purple'>ALL CLEAR!</span>",
-                bossClearDesc: "축하합니다! 134층 최종 보스전을 돌파하고 모든 L을 성공적으로 가져갔습니다!",
-                resetConfirm: "모든 진행 상황과 코인이 초기화됩니다. 계속하시겠습니까?",
-                customSpdBtn: "각성 커스텀",
-                maxBagText: "Lv.30 (무한 주머니)",
-                maxStlText: "Lv.30 (15% 절대회피)"
-            },
-            en: {
-                title: "TAKE THE <span>L</span>",
-                desc: "Steal Smile Ls, bank them at EXIT, and escape!",
-                lblFloor: "STAGE",
-                lblCoins: "COINS",
-                lblBag: "HOLDING",
-                lblGoal: "GOAL BANK",
-                tutTitle: "📖 How to Play & Rules",
-                tut1: "1. Collect and <strong>bank required L-coins</strong> at EXIT zone to unlock the floor exit.",
-                tut2: "2. Carrying limit is restricted by <strong>Bag Capacity</strong>. Return to EXIT to bank your L-coins!",
-                tut3: "3. Dodge Guard L's vision cones, sniper bullets, and lasers.",
-                tut4: "4. <strong>Floor 67+ is HARD MODE</strong>. <strong>Floor 134 is FINAL BOSS</strong>.",
-                shSpd: "Movement Speed",
-                shBag: "Bag Capacity",
-                shStl: "Stealth Duration",
-                btnStart: "START MISSION",
-                btnNext: "NEXT FLOOR",
-                btnRetry: "RETRY",
-                btnReset: "Reset Progress",
-                stealthBtn: "STEALTH",
-                caughtMsg: "Spotted by Guard L!",
-                bulletMsg: "Hit by Guard L's Bullet!",
-                laserMsg: "Tripped Security Laser!",
-                successTitle: "Escape <span>Success!</span>",
-                hardAlert: "Entered Floor 67 <span class='danger'>HARD MODE</span>!",
-                hardDesc: "Floor 67 reached! Enemy bullet frequency and movement speeds are maxed out!",
-                bossAlert: "Floor 134 <span class='purple'>FINAL BOSS</span>",
-                bossDesc: "Final Boss L Appeared! Dodge ring bullet hell and bank 25 L coins to beat the game!",
-                bossClearTitle: "🎉 <span class='purple'>ALL CLEAR!</span>",
-                bossClearDesc: "Congratulations! You beat all 134 floors and took ALL THE Ls!",
-                resetConfirm: "All progress and coins will be reset. Are you sure?",
-                customSpdBtn: "AWAKEN CUSTOM",
-                maxBagText: "Lv.30 (Infinite Bag)",
-                maxStlText: "Lv.30 (15% Dodge Passive)"
+        // --- Game Configuration & State ---
+        let gameMode = 'ai'; // 'ai' or 'pvp'
+        let aiDifficulty = 'smart'; // 'easy' or 'smart'
+        let firstPlayer = 'player'; // 'player' or 'second'
+        let currentTurn = 'player1'; // 'player1', 'player2', 'ai'
+        
+        const fullLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+        let remainingLetters = [...fullLetters];
+        let selectedIndices = []; 
+        
+        let wins = 0;
+        let losses = 0;
+        let soundEnabled = true;
+        let bgmPlaying = false;
+        let audioCtx = null;
+        let bgmInterval = null;
+
+        // --- Web Audio API & Suspenseful BGM Synth ---
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-        };
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
-        /* --- LocalStorage 캐시 저장 데이터 --- */
-        const SAVE_KEY = "TAKE_THE_L_SAVE_V3";
-        let saveData = {
-            coins: 0,
-            floor: 1,
-            spdLv: 1,
-            customSpdLv: 30,
-            bagLv: 1,
-            stealthLv: 1,
-            lang: 'kr'
-        };
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudioContext();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(750, now + 0.08);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'confirm') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); 
+                osc.frequency.setValueAtTime(659.25, now + 0.12); 
+                osc.frequency.setValueAtTime(783.99, now + 0.24); 
+                osc.frequency.setValueAtTime(1046.50, now + 0.36); 
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } else if (type === 'lose') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(250, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.5);
+                gain.gain.setValueAtTime(0.22, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
 
-        function loadSaveData() {
-            try {
-                const raw = localStorage.getItem(SAVE_KEY);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    saveData = { ...saveData, ...parsed };
+        // Procedural Suspenseful Heist Synth Ambient Loop
+        function toggleBGM() {
+            initAudioContext();
+            bgmPlaying = !bgmPlaying;
+            const indicator = document.getElementById('bgmIndicator');
+            const text = document.getElementById('bgmText');
+            const btn = document.getElementById('bgmToggleBtn');
+
+            if (bgmPlaying) {
+                indicator.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+                text.innerText = "BGM ON";
+                btn.className = "px-4 py-2 bg-slate-900/90 hover:bg-rose-950/40 text-emerald-400 font-semibold text-xs font-cyber rounded-xl border border-emerald-500/40 transition-all flex items-center gap-2 shadow-lg active:scale-95";
+                startHeistBGM();
+            } else {
+                indicator.className = "w-2 h-2 rounded-full bg-slate-500";
+                text.innerText = "BGM OFF";
+                btn.className = "px-4 py-2 bg-slate-900/90 hover:bg-rose-950/40 text-slate-400 font-semibold text-xs font-cyber rounded-xl border border-slate-700/40 transition-all flex items-center gap-2 shadow-lg active:scale-95";
+                stopHeistBGM();
+            }
+        }
+
+        function startHeistBGM() {
+            if (bgmInterval) clearInterval(bgmInterval);
+            let bassStep = 0;
+            const bassNotes = [110, 110, 123.47, 130.81, 110, 98.00, 110, 146.83]; // A2 minor suspense riff
+
+            bgmInterval = setInterval(() => {
+                if (!bgmPlaying || !audioCtx) return;
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const filter = audioCtx.createBiquadFilter();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(bassNotes[bassStep], audioCtx.currentTime);
+
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(350, audioCtx.currentTime);
+
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+
+                    bassStep = (bassStep + 1) % bassNotes.length;
+                } catch (e) {
+                    console.error(e);
                 }
-            } catch(e){}
+            }, 300);
         }
 
-        function saveGame() {
-            try {
-                localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
-            } catch(e){}
+        function stopHeistBGM() {
+            if (bgmInterval) {
+                clearInterval(bgmInterval);
+                bgmInterval = null;
+            }
         }
 
-        function resetSaveData() {
-            const lang = saveData.lang;
-            if (confirm(i18n[lang].resetConfirm)) {
-                saveData = { coins: 0, floor: 1, spdLv: 1, customSpdLv: 30, bagLv: 1, stealthLv: 1, lang: lang };
-                saveGame();
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>';
+                icon.className = "w-4 h-4 text-emerald-400";
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>';
+                icon.className = "w-4 h-4 text-rose-400";
+            }
+        }
+
+        // --- Setup Controllers ---
+        function setGameMode(mode) {
+            gameMode = mode;
+            playSound('click');
+            const aiBtn = document.getElementById('modeAiBtn');
+            const pvpBtn = document.getElementById('modePvpBtn');
+            const diffContainer = document.getElementById('aiDifficultyContainer');
+            const secondBtnText = document.getElementById('secondPlayerBtn');
+
+            if (mode === 'ai') {
+                aiBtn.className = "p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 bg-rose-600/20 border-rose-500 text-rose-200 font-semibold shadow-inner";
+                pvpBtn.className = "p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 bg-slate-900/60 border-rose-950 text-slate-400 font-semibold hover:border-rose-800";
+                diffContainer.style.display = 'flex';
+                secondBtnText.innerText = "AI 오퍼레이터";
+            } else {
+                pvpBtn.className = "p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 bg-indigo-600/20 border-indigo-500 text-indigo-200 font-semibold shadow-inner";
+                aiBtn.className = "p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 bg-slate-900/60 border-rose-950 text-slate-400 font-semibold hover:border-rose-800";
+                diffContainer.style.display = 'none';
+                secondBtnText.innerText = "PLAYER 2";
+            }
+        }
+
+        function setDifficulty(diff) {
+            aiDifficulty = diff;
+            playSound('click');
+            const easyBtn = document.getElementById('diffEasyBtn');
+            const smartBtn = document.getElementById('diffSmartBtn');
+
+            if (diff === 'easy') {
+                easyBtn.className = "py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-600/20 text-rose-200 text-xs font-cyber transition-all shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                smartBtn.className = "py-2.5 px-4 rounded-xl border border-rose-950 bg-slate-900/80 text-slate-300 text-xs font-cyber transition-all";
+            } else {
+                smartBtn.className = "py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-600/20 text-rose-200 text-xs font-cyber transition-all shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                easyBtn.className = "py-2.5 px-4 rounded-xl border border-rose-950 bg-slate-900/80 text-slate-300 text-xs font-cyber transition-all";
+            }
+        }
+
+        function setFirstPlayer(val) {
+            firstPlayer = val;
+            playSound('click');
+            const pBtn = document.getElementById('firstPlayerBtn');
+            const sBtn = document.getElementById('secondPlayerBtn');
+
+            if (val === 'player') {
+                pBtn.className = "py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-600/20 text-rose-200 text-xs font-cyber transition-all shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                sBtn.className = "py-2.5 px-4 rounded-xl border border-rose-950 bg-slate-900/80 text-slate-300 text-xs font-cyber transition-all";
+            } else {
+                sBtn.className = "py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-600/20 text-rose-200 text-xs font-cyber transition-all shadow-[0_0_10px_rgba(239,68,68,0.3)]";
+                pBtn.className = "py-2.5 px-4 rounded-xl border border-rose-950 bg-slate-900/80 text-slate-300 text-xs font-cyber transition-all";
+            }
+        }
+
+        // --- Game Flow ---
+        function startGame() {
+            playSound('confirm');
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            
+            remainingLetters = [...fullLetters];
+            selectedIndices = [];
+            currentTurn = (firstPlayer === 'player') ? 'player1' : (gameMode === 'ai' ? 'ai' : 'player2');
+            
+            updateUI();
+
+            if (gameMode === 'ai' && currentTurn === 'ai') {
+                setTimeout(triggerAiTurn, 900);
+            }
+        }
+
+        function returnToSetup() {
+            playSound('click');
+            document.getElementById('gameOverModal').classList.add('hidden');
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('setupScreen').style.display = 'flex';
+        }
+
+        function restartGame() {
+            playSound('click');
+            document.getElementById('gameOverModal').classList.add('hidden');
+            remainingLetters = [...fullLetters];
+            selectedIndices = [];
+            currentTurn = (firstPlayer === 'player') ? 'player1' : (gameMode === 'ai' ? 'ai' : 'player2');
+            updateUI();
+
+            if (gameMode === 'ai' && currentTurn === 'ai') {
+                setTimeout(triggerAiTurn, 900);
+            }
+        }
+
+        // --- Core Selection Logic ---
+        function handleLetterClick(index) {
+            if (gameMode === 'ai' && currentTurn === 'ai') return;
+            if (gameMode === 'pvp' && currentTurn === 'ai') return;
+
+            playSound('click');
+
+            if (selectedIndices.length === 0) {
+                if (index === 0) {
+                    selectedIndices = [0];
+                }
+            } else {
+                if (index >= 0 && index < Math.min(3, remainingLetters.length)) {
+                    let newSelection = [];
+                    for (let i = 0; i <= index; i++) {
+                        newSelection.push(i);
+                    }
+                    if (selectedIndices.length === newSelection.length && selectedIndices[selectedIndices.length - 1] === newSelection[newSelection.length - 1]) {
+                        selectedIndices = [];
+                    } else {
+                        selectedIndices = newSelection;
+                    }
+                }
+            }
+            updateUI();
+        }
+
+        function clearSelection() {
+            playSound('click');
+            selectedIndices = [];
+            updateUI();
+        }
+
+        function confirmSelection() {
+            if (selectedIndices.length === 0) return;
+            playSound('confirm');
+
+            const countToRemove = selectedIndices.length;
+            const removed = remainingLetters.splice(0, countToRemove);
+            selectedIndices = [];
+
+            if (removed.includes('L') || remainingLetters.length === 0) {
+                handleGameOver(currentTurn);
+                return;
+            }
+
+            if (gameMode === 'ai') {
+                currentTurn = 'ai';
+                updateUI();
+                setTimeout(triggerAiTurn, 1100);
+            } else {
+                currentTurn = (currentTurn === 'player1') ? 'player2' : 'player1';
                 updateUI();
             }
         }
 
-        function toggleLanguage() {
-            saveData.lang = saveData.lang === 'kr' ? 'en' : 'kr';
-            saveGame();
-            updateUI();
-        }
-
-        /* --- Web Audio API 합성 오디오 --- */
-        let audioCtx = null;
-        let bgmTimer = null;
-
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        function playSound(freq, type, duration, vol = 0.08) {
-            if (!audioCtx) return;
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e){}
-        }
-
-        function startBGM() {
-            if (bgmTimer) clearInterval(bgmTimer);
-            let step = 0;
-            bgmTimer = setInterval(() => {
-                if (!isPlaying || !audioCtx) return;
-                const isBoss = saveData.floor === 134;
-                const isHard = saveData.floor >= 67;
-                const baseFreq = isBoss ? 150 : (isHard ? 110 : 80);
-
-                if (step % 2 === 0) {
-                    playSound(baseFreq + (step % 4 === 0 ? 0 : 30), 'sawtooth', 0.12, isBoss ? 0.06 : 0.03);
-                }
-                step = (step + 1) % 16;
-            }, 220);
-        }
-
-        function stopBGM() {
-            if (bgmTimer) clearInterval(bgmTimer);
-        }
-
-        /* --- 시드 기반 고정 스테이지 생성기 --- */
-        function seededRandom(seed) {
-            let x = Math.sin(seed++) * 10000;
-            return x - Math.floor(x);
-        }
-
-        /* --- 캔버스 및 게임 변수 --- */
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const viewport = document.getElementById('viewport');
-
-        let W = 400, H = 600;
-        function resize() {
-            W = viewport.clientWidth;
-            H = viewport.clientHeight;
-            canvas.width = W;
-            canvas.height = H;
-        }
-        window.addEventListener('resize', resize);
-
-        let player = { x: 50, y: 50, radius: 11, stealthActive: false, stealthTime: 0, heldCoins: 0 };
-        let guards = [];
-        let bullets = [];
-        let smileLs = [];
-        let lasers = [];
-        let particles = [];
-        let floatingTexts = [];
-        let exitZone = { x: 0, y: 0, radius: 24 };
-
-        let stageTargetCoins = 0;
-        let stageBankedCoins = 0;
-        let isPlaying = false;
-        let animationFrame = null;
-
-        let keys = { w: false, a: false, s: false, d: false };
-        let joyVector = { x: 0, y: 0 };
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.w = true;
-            if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.a = true;
-            if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.s = true;
-            if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.d = true;
-            if (e.code === 'Space') triggerStealth();
-        });
-
-        window.addEventListener('keyup', (e) => {
-            if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.w = false;
-            if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.a = false;
-            if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.s = false;
-            if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.d = false;
-        });
-
-        // 조이스틱
-        const joyBase = document.getElementById('joy-base');
-        const joyThumb = document.getElementById('joy-thumb');
-        let joyActive = false;
-
-        joyBase.addEventListener('touchstart', (e) => { joyActive = true; updateJoy(e.touches[0]); });
-        joyBase.addEventListener('touchmove', (e) => { if (joyActive) updateJoy(e.touches[0]); });
-        joyBase.addEventListener('touchend', () => {
-            joyActive = false;
-            joyVector = { x: 0, y: 0 };
-            joyThumb.style.transform = `translate(0px, 0px)`;
-        });
-
-        function updateJoy(touch) {
-            const rect = joyBase.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            let dx = touch.clientX - cx;
-            let dy = touch.clientY - cy;
-            const dist = Math.hypot(dx, dy);
-            const maxDist = 28;
-
-            if (dist > maxDist) {
-                dx = (dx / dist) * maxDist;
-                dy = (dy / dist) * maxDist;
-            }
-
-            joyThumb.style.transform = `translate(${dx}px, ${dy}px)`;
-            joyVector = { x: dx / maxDist, y: dy / maxDist };
-        }
-
-        document.getElementById('btn-stealth').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            triggerStealth();
-        });
-
-        function triggerStealth() {
-            if (!isPlaying || player.stealthActive) return;
-            player.stealthActive = true;
-            // 30레벨 시 5초 (300프레임)
-            const durationSec = 1.5 + (saveData.stealthLv - 1) * (3.5 / 29);
-            player.stealthTime = Math.floor(durationSec * 60);
-            playSound(650, 'sine', 0.2);
-        }
-
-        /* --- 스테이지 초기화 (1~134층) --- */
-        function startFloor() {
-            initAudio();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            document.getElementById('overlay').style.display = 'none';
-            isPlaying = true;
-
-            const floor = saveData.floor;
-            const isHard = floor >= 67;
-            const isBoss = floor === 134;
-            let seed = floor * 997;
-
-            player.x = 45;
-            player.y = H - 45;
-            player.heldCoins = 0;
-            player.stealthActive = false;
-
-            exitZone = { x: W - 45, y: 45, radius: 24 };
-
-            // 층별 목표 L 코인 지속 증가
-            if (isBoss) {
-                stageTargetCoins = 25;
-            } else {
-                stageTargetCoins = Math.min(30, 2 + Math.floor(floor * 0.45));
-            }
-            stageBankedCoins = 0;
-
-            // L 코인배치
-            smileLs = [];
-            bullets = [];
-            const totalMapCoins = stageTargetCoins + (isBoss ? 5 : 3);
-            for (let i = 0; i < totalMapCoins; i++) {
-                smileLs.push({
-                    x: 60 + seededRandom(seed++) * (W - 120),
-                    y: 60 + seededRandom(seed++) * (H - 120),
-                    radius: 9,
-                    collected: false
-                });
-            }
-
-            // 적 스폰
-            guards = [];
-            if (isBoss) {
-                // 134층 최종 보스
-                guards.push({
-                    x: W / 2,
-                    y: 130,
-                    radius: 24,
-                    angle: 0,
-                    rotSpeed: 0.04,
-                    fov: Math.PI * 0.8,
-                    visionLen: 220,
-                    isBoss: true,
-                    shootTimer: 0
-                });
-            } else {
-                const baseGuardCount = isHard 
-                    ? 6 + Math.min(6, Math.floor((floor - 67) * 0.35))
-                    : 1 + Math.min(5, Math.floor(floor * 0.25));
-
-                for (let i = 0; i < baseGuardCount; i++) {
-                    const isPatrol = i % 2 === 1 && floor >= 4;
-                    const isShooter = i % 3 === 2 && floor >= 10; // 10층부터 총 쏘는 적 등장
-
-                    guards.push({
-                        x: 80 + seededRandom(seed++) * (W - 140),
-                        y: 80 + seededRandom(seed++) * (H - 140),
-                        radius: 13,
-                        angle: seededRandom(seed++) * Math.PI * 2,
-                        rotSpeed: (0.015 + seededRandom(seed++) * 0.02) * (isHard ? 1.7 : 1.0),
-                        fov: isHard ? Math.PI / 2.6 : Math.PI / 3.5,
-                        visionLen: (110 + Math.min(60, floor * 1.5)) * (isHard ? 1.2 : 1.0),
-                        isPatrol: isPatrol,
-                        isShooter: isShooter,
-                        shootTimer: Math.floor(seededRandom(seed++) * 60),
-                        vx: isPatrol ? (seededRandom(seed++) - 0.5) * (isHard ? 2.2 : 1.2) : 0,
-                        vy: isPatrol ? (seededRandom(seed++) - 0.5) * (isHard ? 2.2 : 1.2) : 0
-                    });
-                }
-            }
-
-            // 레이저 트랩
-            lasers = [];
-            if ((floor >= 20 || isHard) && !isBoss) {
-                const laserCount = isHard ? 3 + Math.floor((floor - 67) * 0.15) : 1;
-                for (let i = 0; i < laserCount; i++) {
-                    lasers.push({
-                        y: 110 + i * 100,
-                        speed: (1.5 + seededRandom(seed++) * 1.5) * (isHard ? 1.5 : 1.0),
-                        dir: 1
-                    });
-                }
-            }
-
-            particles = [];
-            floatingTexts = [];
-            updateUI();
-            startBGM();
-
-            if (animationFrame) cancelAnimationFrame(animationFrame);
-            gameLoop();
-        }
-
-        /* --- 실시간 루프 --- */
-        function gameLoop() {
-            if (!isPlaying) return;
-
-            // 1. 이동 처리 (각성 시 사용자 커스텀 레벨 적용)
-            const currentSpdLv = saveData.spdLv >= 30 ? saveData.customSpdLv : saveData.spdLv;
-            const speed = 2.2 + currentSpdLv * 0.35;
-
-            let mx = joyVector.x;
-            let my = joyVector.y;
-
-            if (keys.w) my = -1;
-            if (keys.s) my = 1;
-            if (keys.a) mx = -1;
-            if (keys.d) mx = 1;
-
-            if (mx !== 0 && my !== 0 && !joyActive) {
-                mx *= 0.7071; my *= 0.7071;
-            }
-
-            player.x += mx * speed;
-            player.y += my * speed;
-
-            player.x = Math.max(player.radius, Math.min(W - player.radius, player.x));
-            player.y = Math.max(player.radius, Math.min(H - player.radius, player.y));
-
-            // 은신
-            if (player.stealthActive) {
-                player.stealthTime--;
-                if (player.stealthTime <= 0) player.stealthActive = false;
-            }
-
-            // 2. 총알 이동 및 플레이어 충돌
-            for (let i = bullets.length - 1; i >= 0; i--) {
-                let b = bullets[i];
-                b.x += b.vx;
-                b.y += b.vy;
-
-                // 화면 밖 제거
-                if (b.x < 0 || b.x > W || b.y < 0 || b.y > H) {
-                    bullets.splice(i, 1);
-                    continue;
-                }
-
-                // 총알 충돌
-                if (!player.stealthActive && Math.hypot(player.x - b.x, player.y - b.y) < player.radius + b.radius) {
-                    if (checkDodgePassive()) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-                    handleCaught(i18n[saveData.lang].bulletMsg);
-                    return;
-                }
-            }
-
-            // 3. 감시자 업데이트 및 발사
-            for (let g of guards) {
-                g.angle += g.rotSpeed;
-
-                if (g.isPatrol) {
-                    g.x += g.vx; g.y += g.vy;
-                    if (g.x < 40 || g.x > W - 40) g.vx *= -1;
-                    if (g.y < 40 || g.y > H - 40) g.vy *= -1;
-                }
-
-                // 총알 발사 패턴 (일반 총싸움 적 & 보스)
-                if (g.isShooter || g.isBoss) {
-                    g.shootTimer = (g.shootTimer || 0) + 1;
-                    const interval = g.isBoss ? 45 : (saveData.floor >= 67 ? 90 : 130);
-
-                    if (g.shootTimer >= interval) {
-                        g.shootTimer = 0;
-                        if (g.isBoss) {
-                            // 보스 8방향 탄막 패턴
-                            for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
-                                bullets.push({
-                                    x: g.x, y: g.y,
-                                    vx: Math.cos(a + g.angle) * 3.2,
-                                    vy: Math.sin(a + g.angle) * 3.2,
-                                    radius: 5
-                                });
-                            }
-                        } else {
-                            // 조준 사격
-                            let angle = Math.atan2(player.y - g.y, player.x - g.x);
-                            bullets.push({
-                                x: g.x, y: g.y,
-                                vx: Math.cos(angle) * 3.8,
-                                vy: Math.sin(angle) * 3.8,
-                                radius: 4
-                            });
-                        }
-                        playSound(420, 'square', 0.08);
-                    }
-                }
-
-                // 발각 검사
-                if (!player.stealthActive) {
-                    const dx = player.x - g.x;
-                    const dy = player.y - g.y;
-                    const dist = Math.hypot(dx, dy);
-
-                    if (dist < g.visionLen) {
-                        let targetAngle = Math.atan2(dy, dx);
-                        let diff = targetAngle - g.angle;
-                        while (diff < -Math.PI) diff += Math.PI * 2;
-                        while (diff > Math.PI) diff -= Math.PI * 2;
-
-                        if (Math.abs(diff) < g.fov / 2) {
-                            if (checkDodgePassive()) {
-                                continue;
-                            }
-                            handleCaught(i18n[saveData.lang].caughtMsg);
-                            return;
-                        }
-                    }
-                }
-            }
-
-            // 레이저 판정
-            for (let l of lasers) {
-                l.y += l.speed * l.dir;
-                if (l.y < 80 || l.y > H - 80) l.dir *= -1;
-
-                if (!player.stealthActive && Math.abs(player.y - l.y) < 8) {
-                    if (checkDodgePassive()) continue;
-                    handleCaught(i18n[saveData.lang].laserMsg);
-                    return;
-                }
-            }
-
-            // 4. L 코인 수집 (30레벨 시 무한 주머니)
-            const maxBag = saveData.bagLv >= 30 ? Infinity : (1 + saveData.bagLv);
-            for (let item of smileLs) {
-                if (!item.collected && player.heldCoins < maxBag) {
-                    if (Math.hypot(player.x - item.x, player.y - item.y) < player.radius + item.radius) {
-                        item.collected = true;
-                        player.heldCoins++;
-                        playSound(580, 'triangle', 0.15);
-                        createParticles(item.x, item.y, '#ffb703', 8);
-                        updateUI();
-                    }
-                }
-            }
-
-            // 5. 탈출구 도달 시 반납(Bank) 및 실시간 목표 반영
-            const distToExit = Math.hypot(player.x - exitZone.x, player.y - exitZone.y);
-            if (distToExit < player.radius + exitZone.radius) {
-                if (player.heldCoins > 0) {
-                    stageBankedCoins += player.heldCoins;
-                    addFloatingText(exitZone.x, exitZone.y - 15, `+${player.heldCoins} BANK!`, '#10b981');
-                    player.heldCoins = 0;
-                    playSound(750, 'sine', 0.2);
-                    createParticles(exitZone.x, exitZone.y, '#10b981', 12);
-                    updateUI(); // 실시간 목표 수치 즉시 반영!
-                }
-
-                if (stageBankedCoins >= stageTargetCoins) {
-                    handleEscapeSuccess();
-                    return;
-                }
-            }
-
-            render();
-            animationFrame = requestAnimationFrame(gameLoop);
-        }
-
-        // 30레벨 은신 각성 15% 절대 회피 패시브
-        function checkDodgePassive() {
-            if (saveData.stealthLv >= 30 && Math.random() < 0.15) {
-                addFloatingText(player.x, player.y - 18, "EVADE! (15%)", "#00f0ff");
-                playSound(880, 'sine', 0.12);
-                return true;
-            }
-            return false;
-        }
-
-        /* --- 캔버스 드로잉 --- */
-        function render() {
-            ctx.clearRect(0, 0, W, H);
-            const isHard = saveData.floor >= 67;
-            const isBoss = saveData.floor === 134;
-
-            // 바닥 그리드
-            ctx.strokeStyle = isBoss ? '#20082b' : (isHard ? '#1a080c' : '#101018');
-            ctx.lineWidth = 1;
-            for (let x = 0; x < W; x += 28) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-            }
-            for (let y = 0; y < H; y += 28) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-            }
-
-            // 탈출구 (EXIT ZONE)
-            const isUnlocked = stageBankedCoins >= stageTargetCoins;
-            ctx.fillStyle = isUnlocked ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 42, 95, 0.12)';
-            ctx.strokeStyle = isUnlocked ? '#10b981' : '#ff2a5f';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(exitZone.x, exitZone.y, exitZone.radius, 0, Math.PI * 2);
-            ctx.fill(); ctx.stroke();
-
-            ctx.fillStyle = isUnlocked ? '#10b981' : '#ff2a5f';
-            ctx.font = '900 10px Pretendard';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(isUnlocked ? 'EXIT OPEN' : 'BANK HERE', exitZone.x, exitZone.y);
-
-            // 레이저
-            for (let l of lasers) {
-                ctx.strokeStyle = 'rgba(239, 68, 68, 0.85)';
-                ctx.lineWidth = 3;
-                ctx.shadowColor = '#ef4444';
-                ctx.shadowBlur = 8;
-                ctx.beginPath(); ctx.moveTo(0, l.y); ctx.lineTo(W, l.y); ctx.stroke();
-                ctx.shadowBlur = 0;
-            }
-
-            // 총알 드로잉
-            for (let b of bullets) {
-                ctx.fillStyle = isBoss ? '#a855f7' : '#ff2a5f';
-                ctx.shadowColor = isBoss ? '#a855f7' : '#ff2a5f';
-                ctx.shadowBlur = 6;
-                ctx.beginPath();
-                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-
-            // 스마일 L
-            for (let item of smileLs) {
-                if (!item.collected) {
-                    ctx.save();
-                    ctx.translate(item.x, item.y);
-                    ctx.fillStyle = 'rgba(255, 183, 3, 0.2)';
-                    ctx.beginPath(); ctx.arc(0, 0, item.radius + 3, 0, Math.PI * 2); ctx.fill();
-
-                    ctx.fillStyle = '#ffb703';
-                    ctx.font = '900 11px Pretendard';
-                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                    ctx.fillText('L', 0, -1);
-
-                    ctx.strokeStyle = '#ffb703';
-                    ctx.lineWidth = 1.2;
-                    ctx.beginPath();
-                    ctx.arc(0, 2, 5, 0.1 * Math.PI, 0.9 * Math.PI);
-                    ctx.stroke();
-                    ctx.restore();
-                }
-            }
-
-            // 감시자 L (일반 및 보스)
-            for (let g of guards) {
-                ctx.save();
-                const coneColor = g.isBoss ? 'rgba(168, 85, 247, 0.28)' : (isHard ? 'rgba(239, 68, 68, 0.25)' : 'rgba(255, 183, 3, 0.18)');
-                ctx.fillStyle = coneColor;
-                ctx.beginPath();
-                ctx.moveTo(g.x, g.y);
-                ctx.arc(g.x, g.y, g.visionLen, g.angle - g.fov / 2, g.angle + g.fov / 2);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.strokeStyle = g.isBoss ? '#a855f7' : (isHard ? '#ef4444' : '#ffb703');
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-                ctx.restore();
-
-                ctx.fillStyle = '#161622';
-                ctx.strokeStyle = g.isBoss ? '#a855f7' : (isHard ? '#ef4444' : '#ffb703');
-                ctx.lineWidth = g.isBoss ? 3 : 2;
-                ctx.beginPath();
-                ctx.arc(g.x, g.y, g.radius || 13, 0, Math.PI * 2);
-                ctx.fill(); ctx.stroke();
-
-                drawCrown(ctx, g.x, g.y - (g.isBoss ? 20 : 12), g.isBoss ? 12 : 7, g.isBoss ? '#a855f7' : (isHard ? '#ef4444' : '#ffb703'));
-
-                ctx.fillStyle = '#ffffff';
-                ctx.font = `900 ${g.isBoss ? 16 : 11}px Pretendard`;
-                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(g.isBoss ? 'BOSS L' : 'L', g.x, g.y + 1);
-            }
-
-            // 플로팅 텍스트
-            for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                let ft = floatingTexts[i];
-                ft.y -= 0.6;
-                ft.alpha -= 0.025;
-                if (ft.alpha <= 0) { floatingTexts.splice(i, 1); continue; }
-                ctx.fillStyle = ft.color;
-                ctx.globalAlpha = ft.alpha;
-                ctx.font = '900 11px Pretendard';
-                ctx.textAlign = 'center';
-                ctx.fillText(ft.text, ft.x, ft.y);
-                ctx.globalAlpha = 1.0;
-            }
-
-            // 파티클
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
-                if (p.alpha <= 0) { particles.splice(i, 1); continue; }
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.alpha;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
-                ctx.globalAlpha = 1.0;
-            }
-
-            // 플레이어
-            ctx.save();
-            if (player.stealthActive) ctx.globalAlpha = 0.35;
-
-            ctx.fillStyle = 'rgba(0, 240, 255, 0.22)';
-            ctx.beginPath(); ctx.arc(player.x, player.y, player.radius + 4, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = '#00f0ff';
-            ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fill();
-
-            ctx.fillStyle = '#07070a';
-            ctx.font = '900 10px Pretendard';
-            ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText('ME', player.x, player.y + 1);
-            ctx.restore();
-        }
-
-        function drawCrown(ctx, x, y, size, color) {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.moveTo(x - size, y);
-            ctx.lineTo(x - size, y - size);
-            ctx.lineTo(x - size * 0.5, y - size * 0.5);
-            ctx.lineTo(x, y - size * 1.1);
-            ctx.lineTo(x + size * 0.5, y - size * 0.5);
-            ctx.lineTo(x + size, y - size);
-            ctx.lineTo(x + size, y);
-            ctx.closePath();
-            ctx.fill();
-        }
-
-        function createParticles(x, y, color, count) {
-            for (let i = 0; i < count; i++) {
-                particles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: (Math.random() - 0.5) * 4,
-                    size: 2 + Math.random() * 2.5,
-                    color: color,
-                    alpha: 1.0
-                });
-            }
-        }
-
-        function addFloatingText(x, y, text, color) {
-            floatingTexts.push({ x: x, y: y, text: text, color: color, alpha: 1.0 });
-        }
-
-        function handleCaught(reason) {
-            isPlaying = false;
-            stopBGM();
-            playSound(110, 'sawtooth', 0.4);
-
-            const lang = saveData.lang;
-            const title = document.getElementById('ov-title');
-            const desc = document.getElementById('ov-desc');
-
-            title.innerHTML = `MISSION <span class='danger'>FAILED</span>`;
-            desc.innerHTML = `${reason}`;
-
-            document.getElementById('btn-start').textContent = i18n[lang].btnRetry;
-            updateUI();
-            document.getElementById('overlay').style.display = 'flex';
-        }
-
-        function handleEscapeSuccess() {
-            isPlaying = false;
-            stopBGM();
-
-            const isHard = saveData.floor >= 67;
-            const isBoss = saveData.floor === 134;
-            const rewardMult = isBoss ? 5.0 : (isHard ? 2.5 : 1.0);
-            const earnedCoins = Math.floor(stageBankedCoins * 60 * saveData.floor * rewardMult);
-
-            saveData.coins += earnedCoins;
-
-            const lang = saveData.lang;
-            const title = document.getElementById('ov-title');
-            const desc = document.getElementById('ov-desc');
-
-            if (isBoss) {
-                // 134층 최종 클리어!
-                title.innerHTML = i18n[lang].bossClearTitle;
-                desc.innerHTML = i18n[lang].bossClearDesc;
-                saveData.floor = 134;
-            } else {
-                saveData.floor++;
-                if (saveData.floor === 67) {
-                    title.innerHTML = i18n[lang].hardAlert;
-                    desc.innerHTML = i18n[lang].hardDesc;
-                } else if (saveData.floor === 134) {
-                    title.innerHTML = i18n[lang].bossAlert;
-                    desc.innerHTML = i18n[lang].bossDesc;
+        // --- AI Intelligence ---
+        function triggerAiTurn() {
+            const n = remainingLetters.length;
+            let takeCount = 1;
+
+            if (aiDifficulty === 'smart') {
+                let remainder = (n - 1) % 4;
+                if (remainder === 0) {
+                    takeCount = 1; 
                 } else {
-                    title.innerHTML = i18n[lang].successTitle;
-                    desc.innerHTML = `+${earnedCoins} COINS BANKED!`;
+                    takeCount = remainder;
                 }
+                if (takeCount > 3) takeCount = 3;
+                if (takeCount < 1) takeCount = 1;
+                if (takeCount > n) takeCount = n;
+            } else {
+                const maxPossible = Math.min(3, n);
+                takeCount = Math.floor(Math.random() * maxPossible) + 1;
             }
 
-            saveGame();
-            playSound(820, 'triangle', 0.4);
+            const removed = remainingLetters.splice(0, takeCount);
 
-            document.getElementById('btn-start').textContent = i18n[lang].btnNext;
-            updateUI();
-            document.getElementById('overlay').style.display = 'flex';
-        }
-
-        /* --- 상점 및 각성 시스템 --- */
-        function buyUpgrade(type) {
-            const spdCost = saveData.spdLv * 100;
-            const bagCost = saveData.bagLv * 150;
-            const stlCost = saveData.stealthLv * 200;
-
-            if (type === 'speed') {
-                if (saveData.spdLv >= 30) {
-                    openSpeedModal();
-                    return;
-                }
-                if (saveData.coins >= spdCost) {
-                    saveData.coins -= spdCost;
-                    saveData.spdLv++;
-                }
-            } else if (type === 'bag') {
-                if (saveData.bagLv < 30 && saveData.coins >= bagCost) {
-                    saveData.coins -= bagCost;
-                    saveData.bagLv++;
-                }
-            } else if (type === 'stealth') {
-                if (saveData.stealthLv < 30 && saveData.coins >= stlCost) {
-                    saveData.coins -= stlCost;
-                    saveData.stealthLv++;
-                }
+            if (removed.includes('L') || remainingLetters.length === 0) {
+                handleGameOver('ai');
+                return;
             }
-            saveGame();
-            playSound(500, 'sine', 0.1);
+
+            currentTurn = 'player1';
             updateUI();
         }
 
-        /* --- 각성 스피드 슬라이더 모달 --- */
-        function openSpeedModal() {
-            document.getElementById('modal-speed-custom').style.display = 'flex';
-            document.getElementById('speed-range').value = saveData.customSpdLv || 30;
-            onSpeedSliderChange(saveData.customSpdLv || 30);
+        // --- Game Over ---
+        function handleGameOver(loser) {
+            playSound('lose');
+            const modal = document.getElementById('gameOverModal');
+            const title = document.getElementById('gameOverTitle');
+            const desc = document.getElementById('gameOverDesc');
+            const icon = document.getElementById('gameOverIcon');
+
+            if (gameMode === 'ai') {
+                if (loser === 'player1') {
+                    losses++;
+                    title.innerText = "보안 경보 발령!";
+                    desc.innerText = "AI 오퍼레이터가 마지막 'L' 노드를 당신에게 떠넘겼습니다.";
+                    icon.innerHTML = "🚨";
+                } else {
+                    wins++;
+                    playSound('win');
+                    title.innerText = "금고 침투 성공! 🏆";
+                    desc.innerText = "완벽한 해킹 전략으로 AI에게 'L' 보안 경보를 떠넘겼습니다!";
+                    icon.innerHTML = "🔓";
+                }
+            } else {
+                if (loser === 'player1') {
+                    title.innerText = "PLAYER 2 승리!";
+                    desc.innerText = "PLAYER 1이 마지막 보안 노드 'L'을 해킹하여 체포되었습니다.";
+                } else {
+                    title.innerText = "PLAYER 1 승리!";
+                    desc.innerText = "PLAYER 2가 마지막 보안 노드 'L'을 해킹하여 체포되었습니다.";
+                }
+                icon.innerHTML = "🛡️";
+            }
+
+            updateScoreDisplay();
+            modal.classList.remove('hidden');
         }
 
-        function closeSpeedModal() {
-            document.getElementById('modal-speed-custom').style.display = 'none';
-            saveGame();
-        }
-
-        function onSpeedSliderChange(val) {
-            saveData.customSpdLv = parseInt(val);
-            document.getElementById('speed-val-text').textContent = `SPEED: Lv.${val}`;
-        }
-
+        // --- UI Updates ---
         function updateUI() {
-            const lang = saveData.lang;
-            const dict = i18n[lang];
-
-            document.getElementById('lbl-floor').textContent = dict.lblFloor;
-            document.getElementById('lbl-coins').textContent = dict.lblCoins;
-            document.getElementById('lbl-bag').textContent = dict.lblBag;
-            document.getElementById('lbl-goal').textContent = dict.lblGoal;
-
-            document.getElementById('tut-title').textContent = dict.tutTitle;
-            document.getElementById('tut-rule-1').innerHTML = dict.tut1;
-            document.getElementById('tut-rule-2').innerHTML = dict.tut2;
-            document.getElementById('tut-rule-3').innerHTML = dict.tut3;
-            document.getElementById('tut-rule-4').innerHTML = dict.tut4;
-
-            document.getElementById('sh-spd-title').textContent = dict.shSpd;
-            document.getElementById('sh-bag-title').textContent = dict.shBag;
-            document.getElementById('sh-stl-title').textContent = dict.shStl;
-
-            document.getElementById('btn-stealth').textContent = dict.stealthBtn;
-            document.getElementById('btn-reset').textContent = dict.btnReset;
-
-            const isHard = saveData.floor >= 67;
-            const isBoss = saveData.floor === 134;
-
-            const floorEl = document.getElementById('ui-floor');
-            floorEl.textContent = isBoss ? 'FINAL BOSS' : `FLOOR ${saveData.floor}`;
-            floorEl.className = isBoss ? 'stat-value purple' : (isHard ? 'stat-value hard' : 'stat-value cyan');
-
-            const badgeEl = document.getElementById('ui-mode-badge');
-            if (isBoss) {
-                badgeEl.style.display = 'block';
-                badgeEl.className = 'badge-mode badge-boss';
-                badgeEl.textContent = 'BOSS';
-            } else if (isHard) {
-                badgeEl.style.display = 'block';
-                badgeEl.className = 'badge-mode badge-hard';
-                badgeEl.textContent = 'HARD';
+            const turnBadge = document.getElementById('currentTurnBadge');
+            if (gameMode === 'ai') {
+                turnBadge.innerText = (currentTurn === 'player1') ? '내 차례 (OPERATOR)' : 'AI 해킹 분석 중...';
             } else {
-                badgeEl.style.display = 'none';
+                turnBadge.innerText = (currentTurn === 'player1') ? 'PLAYER 1 턴' : 'PLAYER 2 턴';
             }
 
-            document.getElementById('ui-coin').textContent = `${saveData.coins} C`;
-            
-            const maxBagStr = saveData.bagLv >= 30 ? '∞' : (1 + saveData.bagLv);
-            document.getElementById('ui-bag').textContent = `${player.heldCoins} / ${maxBagStr}`;
-            document.getElementById('ui-goal').textContent = `${stageBankedCoins} / ${stageTargetCoins}`;
+            document.getElementById('remainingCountBadge').innerText = `${remainingLetters.length} / ${fullLetters.length} NODES`;
+            document.getElementById('selectedCountBadge').innerText = `${selectedIndices.length} NODES`;
 
-            // 스피드 버튼
-            const btnSpd = document.getElementById('btn-buy-speed');
-            if (saveData.spdLv >= 30) {
-                document.getElementById('sub-speed').textContent = `Lv.30 (각성 - 속도 커스텀: Lv.${saveData.customSpdLv})`;
-                btnSpd.textContent = dict.customSpdBtn;
-                btnSpd.className = 'btn-buy awaken';
-                btnSpd.disabled = false;
+            const board = document.getElementById('letterBoard');
+            board.innerHTML = '';
+
+            remainingLetters.forEach((letter, idx) => {
+                const isSelected = selectedIndices.includes(idx);
+                const isTargetL = (letter === 'L');
+
+                const btn = document.createElement('button');
+                btn.className = `w-14 h-16 sm:w-16 sm:h-20 rounded-2xl font-black font-cyber text-xl sm:text-2xl transition-all flex items-center justify-center border shadow-lg active:scale-95 relative overflow-hidden ${
+                    isSelected 
+                        ? 'bg-gradient-to-br from-rose-600 to-rose-800 border-rose-400 text-white shadow-[0_0_20px_rgba(239,68,68,0.7)] -translate-y-2' 
+                        : isTargetL 
+                            ? 'bg-amber-950/40 border-amber-500/60 text-amber-300 hover:bg-amber-900/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]' 
+                            : 'bg-slate-900/90 border-rose-950 text-slate-200 hover:border-rose-600/50 hover:bg-slate-800'
+                }`;
+                btn.innerHTML = `<span>${letter}</span>`;
+                
+                // Laser scan line effect on chips
+                const scanLine = document.createElement('div');
+                scanLine.className = "absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity pointer-events-none";
+                btn.appendChild(scanLine);
+
+                btn.onclick = () => handleLetterClick(idx);
+                board.appendChild(btn);
+            });
+
+            const confirmBtn = document.getElementById('confirmBtn');
+            if (selectedIndices.length > 0 && !(gameMode === 'ai' && currentTurn === 'ai')) {
+                confirmBtn.disabled = false;
+                confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
-                const cost = saveData.spdLv * 100;
-                document.getElementById('sub-speed').textContent = `Lv.${saveData.spdLv}`;
-                btnSpd.textContent = `${cost} C`;
-                btnSpd.className = 'btn-buy';
-                btnSpd.disabled = saveData.coins < cost;
+                confirmBtn.disabled = true;
+                confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
             }
 
-            // 가방 버튼
-            const btnBag = document.getElementById('btn-buy-bag');
-            if (saveData.bagLv >= 30) {
-                document.getElementById('sub-bag').textContent = dict.maxBagText;
-                btnBag.textContent = 'MAX';
-                btnBag.disabled = true;
-            } else {
-                const cost = saveData.bagLv * 150;
-                document.getElementById('sub-bag').textContent = `Lv.${saveData.bagLv} (최대 ${1 + saveData.bagLv}개)`;
-                btnBag.textContent = `${cost} C`;
-                btnBag.disabled = saveData.coins < cost;
-            }
-
-            // 은신 버튼
-            const btnStl = document.getElementById('btn-buy-stealth');
-            if (saveData.stealthLv >= 30) {
-                document.getElementById('sub-stealth').textContent = dict.maxStlText;
-                btnStl.textContent = 'MAX';
-                btnStl.disabled = true;
-            } else {
-                const cost = saveData.stealthLv * 200;
-                const dur = (1.5 + (saveData.stealthLv - 1) * (3.5 / 29)).toFixed(1);
-                document.getElementById('sub-stealth').textContent = `Lv.${saveData.stealthLv} (${dur}초)`;
-                btnStl.textContent = `${cost} C`;
-                btnStl.disabled = saveData.coins < cost;
-            }
+            updateScoreDisplay();
         }
 
-        loadSaveData();
-        resize();
-        updateUI();
+        function updateScoreDisplay() {
+            document.getElementById('scoreDisplay').innerText = `${wins}승 ${losses}패`;
+        }
+
+        // --- Modals ---
+        function openRulesModal() {
+            playSound('click');
+            document.getElementById('rulesModal').classList.remove('hidden');
+        }
+
+        function closeRulesModal() {
+            playSound('click');
+            document.getElementById('rulesModal').classList.add('hidden');
+        }
     </script>
 </body>
 </html>
